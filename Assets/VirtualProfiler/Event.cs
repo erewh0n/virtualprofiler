@@ -16,7 +16,7 @@ namespace Assets.VirtualProfiler
 
         public override string ToString()
         {
-            return string.Format("[{0}:{1}]", DeltaTime, Payload);
+            return string.Format("[{0}:{1}]{2}", DeltaTime, Payload, Environment.NewLine);
         }
 
         public static Event Parse(string data)

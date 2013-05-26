@@ -1,56 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class AxisData
+
+    public class ArduinoAxisMovementProtocol
     {
-        public int[] Axes { get; private set; }
-        public string RawInput { get; private set; }
-        public static string Boundary { get { return "e"; } }
+        private const byte BoundaryByte = (byte) 'e';
+        private const long MaximumVectorSize = 30;
 
-        protected AxisData(string rawInput)
+        public static byte[] ParseFromStream(MemoryStream stream)
         {
-            Axes = (from axisDelta in rawInput.Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries)
-                    select int.Parse(Regex.Replace(axisDelta, "[a-zA-Z]*", "")))
-                .ToArray();
-            if (Axes.Length != 6)
-                throw new ArgumentOutOfRangeException(string.Format("Failed to parse the movement data '{0}'.", rawInput));
-            RawInput = rawInput;
-        }
-
-        public static List<AxisData> Create(string rawInput)
-        {
-            var deltas = rawInput.Split(new [] {'e'}, StringSplitOptions.RemoveEmptyEntries);
-
-            var axisDataItems = new List<AxisData>();
-            foreach(var delta in deltas)
+            var startPosition = stream.Position;
+            var bytesRead = 1;
+            var data = stream.ReadByte();
+            while ((data != -1) && (data != BoundaryByte))
             {
-                try
-                {
-                    axisDataItems.Add(new AxisData(delta));
-                }
-                catch
-                {
-                    // Ignore.  Try to recover rather than fail hard.
-                    Debug.Log(string.Format("Failed to parse delta line {0}", delta));
-                }
+                if ((bytesRead) > MaximumVectorSize)
+                    throw new InvalidDataException(
+                        string.Format("The stream data length exceeded the maximum vector size."));
+                data = stream.ReadByte();
+                bytesRead++;
+            }
+            if (data == -1)
+            {
+                stream.Position = startPosition;
+            }
+            else if ((data == BoundaryByte) && (bytesRead > 1))
+            {
+                var axialDataSegment = new byte[bytesRead];
+                stream.Position = startPosition;
+                if (stream.Read(axialDataSegment, 0, axialDataSegment.Length) != axialDataSegment.Length)
+                    throw new InvalidDataException("Failed to read the expected data from the stream.");
+
+                return axialDataSegment;
             }
 
-            return axisDataItems;
+            return null;
         }
 
-        public Vector3 ToVector()
+        public static Vector3 ToVector(string axisData)
         {
-            return new Vector3(Axes[2]-Axes[3], Axes[4]-Axes[5], Axes[0]-Axes[1]);
+            var axes = (from axisDelta in axisData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                        select int.Parse(Regex.Replace(axisDelta, "[a-zA-Z]*", "")))
+                .ToArray();
+            if (axes.Length != 6)
+                throw new InvalidDataException(string.Format(
+                    "The movement data could not be converted to a vector: {0}", axisData));
+
+            return new Vector3(axes[2] - axes[3], axes[4] - axes[5], axes[0] - axes[1]);
         }
 
-        public override string ToString()
-        {
-            return RawInput;
-        }
     }
+
 }

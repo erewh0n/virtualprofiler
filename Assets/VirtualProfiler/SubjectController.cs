@@ -16,7 +16,7 @@ namespace Assets.VirtualProfiler
         {
             _delta = Vector3.zero;
             _subject = transform;
-            _driver = new UnityMovementDriver(new ReplayAdapter(GC.Instance.ReplayFile), new EventLogger(GC.Instance.MovementLogFile));
+            _driver = new UnityMovementDriver(new ReplayAdapter(Global.Instance.ReplayFile), new EventStreamWriter(Global.Instance.MovementLogFile));
             _moving = false;
         }
 
@@ -27,7 +27,7 @@ namespace Assets.VirtualProfiler
 
         private IEnumerator Move()
         {
-            var timeScale = GC.Instance.UniversalScaling * Time.deltaTime;
+            var timeScale = Global.Instance.UniversalScaling * Time.deltaTime;
 
             _moving = true;
             var xzVector = _delta;

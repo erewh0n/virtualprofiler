@@ -1,49 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class EventLogger
+    public static class StringExtensions
     {
-        private const string Version = "1.0";
-        private readonly FileStream _movementStream;
-        
-        public EventLogger(string streamFileName)
+        public static string ValidateStringAsFilePath(this string filepath)
         {
-            if (string.IsNullOrEmpty(streamFileName))
+            if (string.IsNullOrEmpty(filepath))
             {
-                throw new ArgumentNullException("streamFileName", "The filename for the movement stream cannot be empty.");
+                throw new ArgumentNullException("filepath", "The filename cannot be empty.");
             }
-            var dir = Path.GetDirectoryName(streamFileName);
+            var dir = Path.GetDirectoryName(filepath);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
             {
-                throw new ArgumentException("The specified file '{0}' does not exist.");
+                throw new ArgumentException(string.Format("The specified directory '{0}' does not exist.", dir));
             }
-            _movementStream = new FileStream(streamFileName, FileMode.Append, FileAccess.Write, FileShare.Read);
+
+            return filepath;
+        }
+
+    }
+
+    public class EventStreamWriter : IDisposable
+    {
+        private const string Version = "1.0";
+        private readonly FileStream _stream;
+        
+        public EventStreamWriter(string streamFileName)
+        {
+            _stream = new FileStream(streamFileName.ValidateStringAsFilePath(), FileMode.CreateNew, FileAccess.Write, FileShare.Read);
             WriteHeader();
-            Debug.Log("Event log started." + Environment.NewLine);
+        }
+
+        public void Write(Event @event)
+        {
+            if (@event != null) this.Write(new List<Event>{@event});
         }
 
         public void Write(IEnumerable<Event> events)
         {
-            foreach (var @event in events)
+            if (events == null) return;
+            foreach (var bytes in events.Select(@event => Encoding.UTF8.GetBytes(@event.ToString())))
             {
-                // Debug.Log(string.Format("Writing event: {0}", @event.ToString()));
-                var bytes = Encoding.UTF8.GetBytes(@event.ToString() + Environment.NewLine);
-                _movementStream.Write(bytes, 0, bytes.Length);
-                _movementStream.Flush();
+                _stream.Write(bytes, 0, bytes.Length);
+                _stream.Flush();
             }
         }
 
         private void WriteHeader()
         {
+            // TODO KPH: this should be done by the Event class.
             var bytes = Encoding.UTF8.GetBytes(string.Format("[EventLog({0}) Timestamp:{1}]{2}", Version, DateTime.UtcNow, Environment.NewLine));
-            _movementStream.Write(bytes, 0, bytes.Length);
-            _movementStream.Flush();
+            _stream.Write(bytes, 0, bytes.Length);
+            _stream.Flush();
+        }
+
+        public void Dispose()
+        {
+            _stream.Close();
+            System.GC.SuppressFinalize(_stream);
         }
 
     }
+
 }

@@ -17,7 +17,7 @@ namespace Assets.VirtualProfiler
                                    0))
                  * Vector3.forward * 500.0f);
 
-            transform.Translate(0, Target.position.y + GC.Instance.DistanceAboveSubject, 0);
+            transform.Translate(0, Target.position.y + Global.Instance.DistanceAboveSubject, 0);
 
             transform.LookAt(Target);
         }

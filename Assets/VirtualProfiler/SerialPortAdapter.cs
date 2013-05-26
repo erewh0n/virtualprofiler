@@ -10,8 +10,8 @@ namespace Assets.VirtualProfiler
         public MemoryStream DataStream { get; private set; }
         private readonly SerialPort _serialPort =
             new SerialPort(
-                GC.Instance.SerialPortMovementInput,
-                GC.Instance.SerialPortBaud,
+                Global.Instance.SerialPortMovementInput,
+                Global.Instance.SerialPortBaud,
                 Parity.None,
                 8,
                 StopBits.One);
@@ -24,10 +24,8 @@ namespace Assets.VirtualProfiler
             Debug.Log("Serial port opened.");
         }
 
-        // TODO KPH: use events and make this async?
-        public Stream GetData()
+        public MemoryStream WriteToStream(MemoryStream buffer)
         {
-            var buffer = new MemoryStream();
             try
             {
                 var sb = (byte) _serialPort.ReadByte();
