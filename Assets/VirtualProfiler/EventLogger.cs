@@ -15,7 +15,9 @@ namespace Assets.VirtualProfiler
             {
                 throw new ArgumentNullException("filepath", "The filename cannot be empty.");
             }
+            Debug.Log("file: " + filepath);
             var dir = Path.GetDirectoryName(filepath);
+            Debug.Log("dir: " + dir);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
             {
                 throw new ArgumentException(string.Format("The specified directory '{0}' does not exist.", dir));

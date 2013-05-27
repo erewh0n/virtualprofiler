@@ -16,7 +16,7 @@ namespace Assets.VirtualProfiler
         {
             _delta = Vector3.zero;
             _subject = transform;
-            _driver = new UnityMovementDriver(new ReplayAdapter(Global.Instance.ReplayFile), new EventStreamWriter(Global.Instance.MovementLogFile));
+            _driver = new UnityMovementDriver(new SerialPortAdapter(), new EventStreamWriter(string.Format("{0}.{1}", DateTime.UtcNow.ToString("yyyyMMMMdd-HHmmss"), Global.Instance.MovementLogFile)));
             _moving = false;
         }
 
@@ -37,6 +37,10 @@ namespace Assets.VirtualProfiler
             for (var t = 0f; t < 1; t += (Time.fixedDeltaTime / 0.5f))
             {
                 _subject.transform.position = Vector3.Lerp(curPos, newPos, t);
+                _subject.rotation = Quaternion.Slerp()
+                _subject.transform.Rotate(_delta.y * timeScale * Vector3.up, Space.Self);
+                // TODO KPH: use quaternion.lerp here ... Rotate(_delta.y * timeScale * Vector3.up, Space.Self);
+
                 yield return 0;
             }
 

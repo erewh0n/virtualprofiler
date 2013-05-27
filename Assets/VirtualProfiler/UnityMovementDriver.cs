@@ -36,6 +36,7 @@ namespace Assets.VirtualProfiler
         public IEnumerable<Vector3> GetVectors()
         {
             var timestamp = Time.time;
+
             var currentPosition = _buffer.Position;
             _buffer.Seek(0, SeekOrigin.End);
             _adapter.WriteToStream(_buffer);
@@ -45,18 +46,28 @@ namespace Assets.VirtualProfiler
             var vectors = new List<Vector3>();
             while ((axisData = ArduinoAxisMovementProtocol.ParseFromStream(_buffer)) != null)
             {
+                currentPosition = _buffer.Position;
                 var axisStringData = Encoding.UTF8.GetString(axisData);
 
                 _logger.Write(new Event(timestamp, axisStringData));
-                vectors.Add(ArduinoAxisMovementProtocol.ToVector(axisStringData));
+                try
+                {
+                    vectors.Add(ArduinoAxisMovementProtocol.ToVector(axisStringData));
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(string.Format("Ignoring bad data: {0}", axisStringData));
+                }
             }
-            var bytesRemaining = (_buffer.Length - 1) - _buffer.Position;
+
+            var bytesRemaining = _buffer.Length - currentPosition;
             if (bytesRemaining > 0)
             {
                 var remaining = new byte[bytesRemaining];
                 _buffer.Read(remaining, 0, (int) bytesRemaining);
                 _buffer.Dispose();
-                _buffer = new MemoryStream(remaining);
+                _buffer = new MemoryStream();
+                _buffer.Write(remaining, 0, remaining.Length);
             }
 
             return vectors;
