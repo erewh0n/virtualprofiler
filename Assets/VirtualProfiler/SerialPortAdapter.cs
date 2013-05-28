@@ -10,8 +10,8 @@ namespace Assets.VirtualProfiler
         public MemoryStream DataStream { get; private set; }
         private readonly SerialPort _serialPort =
             new SerialPort(
-                Global.Instance.SerialPortMovementInput,
-                Global.Instance.SerialPortBaud,
+                Global.Config.SerialPortMovementInput,
+                Global.Config.SerialPortBaud,
                 Parity.None,
                 8,
                 StopBits.One);
@@ -21,16 +21,18 @@ namespace Assets.VirtualProfiler
             _serialPort.Open();
             _serialPort.ReadTimeout = 5; // in milliseconds
             DataStream = new MemoryStream();
-            Debug.Log("Serial port opened.");
+            Logger.Debug("Serial port opened.");
         }
 
-        public MemoryStream WriteToStream(MemoryStream buffer)
+        public int WriteToStream(MemoryStream buffer)
         {
+            var bytesWritten = 0;
             try
             {
                 var sb = (byte) _serialPort.ReadByte();
                 while (sb != '\0')
                 {
+                    bytesWritten++;
                     buffer.WriteByte(sb);
                     sb = (byte) _serialPort.ReadByte();
                 }
@@ -40,7 +42,7 @@ namespace Assets.VirtualProfiler
                 // We can safely ignore.
             }
 
-            return buffer;
+            return bytesWritten;
         }
 
         public void Dispose()

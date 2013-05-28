@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Assets.Editor
 {
+
     public class MenuOptions : ScriptableObject
     {
         public void OnGUI()

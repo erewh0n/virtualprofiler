@@ -24,9 +24,6 @@ namespace Assets.VirtualProfiler
         {
             // TODO KPH: use maximum time for sync.
             byte[] data = null;
-            while ((data = ArduinoAxisMovementProtocol.ParseFromStream(_adapter.WriteToStream(_buffer))) == null)
-            {
-            }
             if (data == null)
                 return false;
 
@@ -39,9 +36,12 @@ namespace Assets.VirtualProfiler
 
             var currentPosition = _buffer.Position;
             _buffer.Seek(0, SeekOrigin.End);
-            _adapter.WriteToStream(_buffer);
+            var bytesWritten = _adapter.WriteToStream(_buffer);
             _buffer.Position = currentPosition;
 
+            if (bytesWritten == 0)
+                return new List<Vector3>();
+                
             byte[] axisData;
             var vectors = new List<Vector3>();
             while ((axisData = ArduinoAxisMovementProtocol.ParseFromStream(_buffer)) != null)
@@ -56,7 +56,7 @@ namespace Assets.VirtualProfiler
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(string.Format("Ignoring bad data: {0}", axisStringData));
+                    Logger.Warning(string.Format("Ignoring bad data: {0}", axisStringData), e);
                 }
             }
 
@@ -64,10 +64,12 @@ namespace Assets.VirtualProfiler
             if (bytesRemaining > 0)
             {
                 var remaining = new byte[bytesRemaining];
+                _buffer.Position = currentPosition;
                 _buffer.Read(remaining, 0, (int) bytesRemaining);
                 _buffer.Dispose();
                 _buffer = new MemoryStream();
                 _buffer.Write(remaining, 0, remaining.Length);
+                _buffer.Position = 0;
             }
 
             return vectors;

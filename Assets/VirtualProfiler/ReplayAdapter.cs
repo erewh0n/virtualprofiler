@@ -26,18 +26,19 @@ namespace Assets.VirtualProfiler
             Events = new Stack<Event>((from line in lines select Event.Parse(line)).Where(x => x != null).Reverse());
         }
 
-        public MemoryStream WriteToStream(MemoryStream stream)
+        public int WriteToStream(MemoryStream stream)
         {
+            var numWritten = 0;
             while (Events.Count > 0 && Events.Peek().DeltaTime < Time.time)
             {
                 var @event = Events.Pop();
                 var buffer = Encoding.UTF8.GetBytes((string) @event.Payload);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.WriteByte((byte) 'e');
+                numWritten += buffer.Length + 1;
             }
-    
-            stream.Position = 0;
-            return stream;
+
+            return numWritten;
         }
 
         public void Dispose()

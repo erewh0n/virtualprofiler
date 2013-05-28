@@ -17,27 +17,31 @@ namespace Assets.VirtualProfiler
         public static byte[] ParseFromStream(MemoryStream stream)
         {
             // TODO KPH: use using on the MS.
-            var dataRecord = new MemoryStream();
-
-            var bytesRead = 1;
-            var data = stream.ReadByte();
-            while ((data != -1) && (data != BoundaryByte))
+            using (var dataRecord = new MemoryStream())
             {
+                var bytesRead = 1;
+                var data = stream.ReadByte();
                 dataRecord.WriteByte((byte) data);
-                if ((bytesRead) > MaximumVectorSize)
-                    throw new InvalidDataException(
-                        string.Format("The stream data length exceeded the maximum record size."));
-                data = stream.ReadByte();
-                bytesRead++;
-            }
-            if (data == -1)
-            {
-                Debug.Log("Returning null from ParseFromStream().");
-                return null;
-            }
+                while ((data != -1) && (data != BoundaryByte))
+                {
+                    if ((bytesRead) > MaximumVectorSize)
+                        throw new InvalidDataException(
+                            string.Format("The stream data length exceeded the maximum record size."));
+                    data = stream.ReadByte();
+                    dataRecord.WriteByte((byte)data);
+                    bytesRead++;
+                }
+                if (data == -1)
+                {
+                    return null;
+                }
 
-            dataRecord.Position = 0;
-            return dataRecord.GetBuffer();
+                dataRecord.Position = 0;
+                var record = new byte[bytesRead];
+                dataRecord.Read(record, 0, record.Length);
+
+                return record;
+            }
         }
 
         public static Vector3 ToVector(string axisData)

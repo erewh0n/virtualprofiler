@@ -5,6 +5,6 @@ namespace Assets.VirtualProfiler
 {
     public interface IStreamAdapter : IDisposable
     {
-        MemoryStream WriteToStream(MemoryStream buffer);
+        int WriteToStream(MemoryStream buffer);
     }
 }

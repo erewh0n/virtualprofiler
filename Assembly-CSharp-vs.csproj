@@ -50,6 +50,7 @@
      <Compile Include="Assets\VirtualProfiler\EventLogger.cs" />
      <Compile Include="Assets\VirtualProfiler\Global.cs" />
      <Compile Include="Assets\VirtualProfiler\IStreamAdapter.cs" />
+     <Compile Include="Assets\VirtualProfiler\Logger.cs" />
      <Compile Include="Assets\VirtualProfiler\ReplayAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SerialPortAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />

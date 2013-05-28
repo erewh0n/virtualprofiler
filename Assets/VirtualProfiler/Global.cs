@@ -4,7 +4,7 @@ namespace Assets.VirtualProfiler
 {
     public class Global
     {
-        private static Configuration _instance;
-        public static Configuration Instance { get { return _instance ?? (_instance = GameObject.FindObjectOfType(typeof(Configuration)) as Configuration); } }
+        private static Configuration _configInstance;
+        public static Configuration Config { get { return _configInstance ?? (_configInstance = Object.FindObjectOfType(typeof(Configuration)) as Configuration); } }
     }
 }

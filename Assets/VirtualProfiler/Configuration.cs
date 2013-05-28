@@ -6,8 +6,12 @@ namespace Assets.VirtualProfiler
     public class Configuration : MonoBehaviour
     {
         public string ReplayFile = "ReplayStream.log";
-        public string MovementLogFile = "MovementStream.log";
-        public float UniversalScaling = 100.0f;
+        public string MovementLogDirectory = "C:\\virtualprofiler";
+
+        public float ScaleX = 100.0f;
+        public float ScaleZ = 100.0f;
+        public float ScaleY = 100.0f;
+        public float Smoothing = 0.5f;
 
         public float DistanceAboveSubject = 10;
 
