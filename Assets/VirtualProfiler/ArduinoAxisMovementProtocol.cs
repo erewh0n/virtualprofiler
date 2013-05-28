@@ -47,7 +47,7 @@ namespace Assets.VirtualProfiler
         public static Vector3 ToVector(string axisData)
         {
             var axes = (from axisDelta in axisData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
-                        select int.Parse(Regex.Replace(axisDelta, "[a-zA-Z]*", "")))
+                        where !axisDelta.Contains((char)BoundaryByte) select int.Parse(Regex.Replace(axisDelta, "[a-zA-Z]*", "")))
                 .ToArray();
             if (axes.Length != 6)
                 throw new InvalidDataException(string.Format(

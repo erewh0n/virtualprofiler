@@ -17,5 +17,7 @@ namespace Assets.VirtualProfiler
 
         public string SerialPortMovementInput = "COM5";
         public int SerialPortBaud = 9600;
+
+        public bool DebugLoggingEnabled = true;
     }
 }

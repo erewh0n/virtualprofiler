@@ -8,13 +8,13 @@ namespace Assets.VirtualProfiler
 
         public static void Debug(string message)
         {
-            UnityEngine.Debug.Log(message);
+            if (Global.Config.DebugLoggingEnabled)
+                UnityEngine.Debug.Log(message);
         }
 
         public static void Warning(string message, Exception e)
         {
-            UnityEngine.Debug.LogWarning(message);
-            UnityEngine.Debug.LogException(e);
+            UnityEngine.Debug.LogWarning(string.Format("{0}: {1}", message, e.Message));
         }
 
         public static void Error(string message, Exception e)

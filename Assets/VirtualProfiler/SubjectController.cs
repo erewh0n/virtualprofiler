@@ -58,6 +58,7 @@ namespace Assets.VirtualProfiler
             var endPos = curPos + xzVector;
             var curRotation = _subject.rotation;
             var endRotation = _subject.rotation*Quaternion.Euler(new Vector3(0, _delta.y, 0));
+            Logger.Debug(string.Format("Moving subject: {0}", _delta));
             for (var t = 0f; t < 1; t += (Time.deltaTime / Global.Config.Smoothing))
             {
                 _subject.transform.position = Vector3.Lerp(curPos, endPos, t);
