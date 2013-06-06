@@ -1,4 +1,5 @@
-﻿using Assets.SmartMenu;
+﻿using System;
+using Assets.SmartMenu;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
@@ -9,7 +10,14 @@ namespace Assets.VirtualProfiler
 
         public void OnGUI()
         {
-            _menuController.OnGUI();
+            try
+            {
+                _menuController.OnGUI();
+            }
+            catch (Exception e)
+            {
+                Logger.Error("An exception occurred while navigating the menu.", e);
+            }
         }
 
     }

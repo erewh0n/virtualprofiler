@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class SubjectController : MonoBehaviour
+    public class SubjectController : MonoBehaviour, IDisposable
     {
         private Transform _subject;
         private UnityMovementDriver _driver;
@@ -23,7 +23,7 @@ namespace Assets.VirtualProfiler
 
         public void DetachDriver()
         {
-            _driver.Dispose();
+            Dispose();
             _moving = false;
             _delta = Vector3.zero;
         }
@@ -32,15 +32,11 @@ namespace Assets.VirtualProfiler
         {
             _subject = transform;
             _driver = null;
-
         }
 
         public void OnApplicationQuit()
         {
-            if (_driver != null)
-                _driver.Dispose();
-
-            _driver = null;
+            Dispose();
         }
 
         private Vector3 Scale(Vector3 vector)
@@ -54,8 +50,8 @@ namespace Assets.VirtualProfiler
 
         private IEnumerator Move()
         {
-
             _moving = true;
+
             var xzVector = _delta;
             xzVector.y = 0;
             xzVector.x *= (Global.Config.ScaleX*Time.deltaTime);
@@ -64,7 +60,9 @@ namespace Assets.VirtualProfiler
             var endPos = curPos + xzVector;
             var curRotation = _subject.rotation;
             var endRotation = _subject.rotation*Quaternion.Euler(new Vector3(0, _delta.y, 0));
+
             Logger.Debug(string.Format("Moving subject: {0}", _delta));
+
             for (var t = 0f; t < 1; t += (Time.deltaTime / Global.Config.Smoothing))
             {
                 _subject.transform.position = Vector3.Lerp(curPos, endPos, t);
@@ -100,6 +98,13 @@ namespace Assets.VirtualProfiler
             }
         }
 
+        public void Dispose()
+        {
+            if (_driver != null)
+                _driver.Dispose();
+
+            _driver = null;
+        }
     }
 
 }
