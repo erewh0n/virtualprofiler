@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -13,37 +12,44 @@ namespace Assets.VirtualProfiler
         private Vector3 _delta;
         private bool _moving;
 
+        public void AttachDriver(UnityMovementDriver driver)
+        {
+            _driver = driver;
+            _moving = false;
+            _delta = Vector3.zero;
+            if (_driver == null)
+                throw new ArgumentNullException("driver");
+        }
+
+        public void DetachDriver()
+        {
+            _driver.Dispose();
+            _moving = false;
+            _delta = Vector3.zero;
+        }
+
         public void Start()
         {
-            _delta = Vector3.zero;
             _subject = transform;
+            _driver = null;
 
-            try
-            {
-                if (!Directory.Exists(Global.Config.MovementLogDirectory))
-                    Directory.CreateDirectory(Global.Config.MovementLogDirectory);
-                var path = Path.Combine(Global.Config.MovementLogDirectory,
-                                        string.Format("MovementStream.{0}.log",
-                                                      DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")));
-                _driver = new UnityMovementDriver(new SerialPortAdapter(), new EventStreamWriter(path));
-                _moving = false;
-            }
-            catch (Exception e)
-            {
-                Logger.Error("Failed while setting up profiler event logger.", e);
-            }
         }
 
         public void OnApplicationQuit()
         {
-            _driver.Dispose();
+            if (_driver != null)
+                _driver.Dispose();
+
+            _driver = null;
         }
 
-        private void Scale(Vector3 vector)
+        private Vector3 Scale(Vector3 vector)
         {
             vector.x = Global.Config.ScaleX*Time.deltaTime;
             vector.y = Global.Config.ScaleY*Time.deltaTime;
             vector.z = Global.Config.ScaleZ*Time.deltaTime;
+
+            return vector;
         }
 
         private IEnumerator Move()
@@ -75,13 +81,17 @@ namespace Assets.VirtualProfiler
         {
             try
             {
+                if (_driver == null)
+                {
+                    return;
+                }
                 var vectors = _driver.GetVectors().ToList();
                 var summedVector = vectors.Aggregate(Vector3.zero, (current, vector) => current + vector);
                 _delta += summedVector;
 
                 if (_moving || _delta == Vector3.zero)
                     return;
-                Scale(_delta);
+                _delta = Scale(_delta);
                 StartCoroutine(Move());
             }
             catch (Exception e)

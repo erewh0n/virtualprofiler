@@ -44,6 +44,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\SmartMenu\ISmartMenu.cs" />
+     <Compile Include="Assets\SmartMenu\MainMenuView.cs" />
+     <Compile Include="Assets\SmartMenu\SmartMenuController.cs" />
      <Compile Include="Assets\VirtualProfiler\ArduinoAxisMovementProtocol.cs" />
      <Compile Include="Assets\VirtualProfiler\Configuration.cs" />
      <Compile Include="Assets\VirtualProfiler\Event.cs" />
@@ -56,6 +59,8 @@
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />
      <Compile Include="Assets\VirtualProfiler\SubjectController.cs" />
      <Compile Include="Assets\VirtualProfiler\UnityMovementDriver.cs" />
+     <Compile Include="Assets\VirtualProfiler\VirtualProfileLauncher.cs" />
+     <Compile Include="Assets\VirtualProfiler\VirtualProfilerMenuController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
