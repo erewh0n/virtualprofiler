@@ -41,9 +41,9 @@ namespace Assets.VirtualProfiler
 
         private Vector3 Scale(Vector3 vector)
         {
-            vector.x = Global.Config.ScaleX*Time.deltaTime;
-            vector.y = Global.Config.ScaleY*Time.deltaTime;
-            vector.z = Global.Config.ScaleZ*Time.deltaTime;
+            vector.x *= Global.Config.ScaleX*Time.deltaTime;
+            vector.y *= Global.Config.ScaleY*Time.deltaTime;
+            vector.z *= Global.Config.ScaleZ*Time.deltaTime;
 
             return vector;
         }
@@ -54,9 +54,8 @@ namespace Assets.VirtualProfiler
 
             var xzVector = _delta;
             xzVector.y = 0;
-            xzVector.x *= (Global.Config.ScaleX*Time.deltaTime);
-            xzVector.z *= (Global.Config.ScaleZ*Time.deltaTime);
             var curPos = _subject.transform.position;
+            xzVector = _subject.TransformDirection(xzVector);
             var endPos = curPos + xzVector;
             var curRotation = _subject.rotation;
             var endRotation = _subject.rotation*Quaternion.Euler(new Vector3(0, _delta.y, 0));
@@ -85,11 +84,14 @@ namespace Assets.VirtualProfiler
                 }
                 var vectors = _driver.GetVectors().ToList();
                 var summedVector = vectors.Aggregate(Vector3.zero, (current, vector) => current + vector);
-                _delta += summedVector;
+                if (summedVector == Vector3.zero) return;
 
+                _delta += summedVector;
                 if (_moving || _delta == Vector3.zero)
                     return;
+
                 _delta = Scale(_delta);
+
                 StartCoroutine(Move());
             }
             catch (Exception e)
