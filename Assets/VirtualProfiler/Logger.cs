@@ -14,13 +14,14 @@ namespace Assets.VirtualProfiler
 
         public static void Warning(string message, Exception e)
         {
-            UnityEngine.Debug.LogWarning(string.Format("{0}: {1}", message, e.Message));
+            var loggedMessage = e == null ? message : string.Format("{0}: {1}", message, e.Message);
+
+            UnityEngine.Debug.LogWarning(loggedMessage);
         }
 
         public static void Error(string message, Exception e)
         {
-            UnityEngine.Debug.LogError(message);
-            UnityEngine.Debug.LogException(e);
+            Warning(message, e);
         }
 
     }

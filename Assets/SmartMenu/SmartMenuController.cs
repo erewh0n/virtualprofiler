@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using Assets.VirtualProfiler;
+using UnityEngine;
+
 namespace Assets.SmartMenu
 {
 
@@ -15,8 +18,27 @@ namespace Assets.SmartMenu
 
         public void OnGUI()
         {
-            _nextMenu = _nextMenu == null ? _defaultMenu.CreateMenu() : _nextMenu.CreateMenu();
+            _nextMenu = _nextMenu == null ? CreateDefaultMenu() : CreateNextMenu();
         }
+
+        protected ISmartMenu CreateDefaultMenu()
+        {
+            return _defaultMenu.CreateMenu();
+        }
+
+        protected ISmartMenu CreateNextMenu()
+        {
+            try
+            {
+                return _nextMenu.CreateMenu();
+            }
+            catch (Exception e)
+            {
+                Logger.Error("There was a problem generating the next menu!", e);
+                return _defaultMenu.CreateMenu();
+            }
+        }
+
     }
 
 }

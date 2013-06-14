@@ -44,8 +44,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\SmartMenu\ArduinoMenu.cs" />
+     <Compile Include="Assets\SmartMenu\ConfirmationDialogMenu.cs" />
+     <Compile Include="Assets\SmartMenu\IMenuTextField.cs" />
      <Compile Include="Assets\SmartMenu\ISmartMenu.cs" />
      <Compile Include="Assets\SmartMenu\MainMenuView.cs" />
+     <Compile Include="Assets\SmartMenu\MenuTextFieldBinder.cs" />
+     <Compile Include="Assets\SmartMenu\RunningMenu.cs" />
      <Compile Include="Assets\SmartMenu\SmartMenuController.cs" />
      <Compile Include="Assets\VirtualProfiler\ArduinoAxisMovementProtocol.cs" />
      <Compile Include="Assets\VirtualProfiler\Configuration.cs" />
