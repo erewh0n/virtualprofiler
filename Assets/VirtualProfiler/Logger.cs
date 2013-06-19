@@ -14,7 +14,7 @@ namespace Assets.VirtualProfiler
 
         public static void Warning(string message, Exception e)
         {
-            var loggedMessage = e == null ? message : string.Format("{0}: {1}", message, e.Message);
+            var loggedMessage = e == null ? message : string.Format("{0}: {1}{2}{3}", message, e.Message, Environment.NewLine, e.StackTrace);
 
             UnityEngine.Debug.LogWarning(loggedMessage);
         }

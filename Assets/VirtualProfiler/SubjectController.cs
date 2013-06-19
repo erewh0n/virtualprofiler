@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace Assets.VirtualProfiler
         private UnityMovementDriver _driver;
         private Vector3 _delta;
         private bool _moving;
+        private LineRenderer _lineRenderer;
+        private List<Vector3> _lineSegments = new List<Vector3>();
 
         public void AttachDriver(UnityMovementDriver driver)
         {
@@ -32,6 +35,7 @@ namespace Assets.VirtualProfiler
         {
             _subject = transform;
             _driver = null;
+            _lineRenderer = GetComponent<LineRenderer>();
         }
 
         public void OnApplicationQuit()
@@ -60,8 +64,7 @@ namespace Assets.VirtualProfiler
             var curRotation = _subject.rotation;
             var endRotation = _subject.rotation*Quaternion.Euler(new Vector3(0, _delta.y, 0));
 
-            Logger.Debug(string.Format("Moving subject: {0}", _delta));
-
+            // Logger.Debug(string.Format("Moving subject: {0}", _delta));
             for (var t = 0f; t < 1; t += (Time.deltaTime / Global.Config.Smoothing))
             {
                 _subject.transform.position = Vector3.Lerp(curPos, endPos, t);
@@ -74,6 +77,18 @@ namespace Assets.VirtualProfiler
             _moving = false;
         }
 
+
+        private void RenderVirtualPath(Vector3 oldPosition, List<Vector3> movementDeltas)
+        {
+            if (_lineRenderer == null) return;
+            _lineSegments.AddRange(from delta in movementDeltas select (oldPosition += new Vector3(delta.x, 0, delta.z)));
+            _lineRenderer.SetVertexCount(_lineSegments.Count);
+            for (var i = 0; i < _lineSegments.Count; i++)
+            {
+                _lineRenderer.SetPosition(i, _lineSegments[i]);
+            }
+        }
+
         public void Update()
         {
             try
@@ -82,17 +97,21 @@ namespace Assets.VirtualProfiler
                 {
                     return;
                 }
+                var oldPosition = _subject.position;
                 var vectors = _driver.GetVectors().ToList();
+                vectors.Add(new Vector3(0, 10, 0.25f));
                 var summedVector = vectors.Aggregate(Vector3.zero, (current, vector) => current + vector);
+
                 if (summedVector == Vector3.zero) return;
 
-                _delta += summedVector;
+                _delta += Scale(summedVector);
                 if (_moving || _delta == Vector3.zero)
                     return;
 
-                _delta = Scale(_delta);
-
                 StartCoroutine(Move());
+    
+                if (Global.Config.EnablePathRenderer)
+                    RenderVirtualPath(oldPosition, vectors.ToList());
             }
             catch (Exception e)
             {

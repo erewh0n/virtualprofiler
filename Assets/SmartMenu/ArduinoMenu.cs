@@ -5,6 +5,15 @@ using UnityEngine;
 
 namespace Assets.SmartMenu
 {
+    public class LabeledField
+    {
+
+        public LabeledField(int xOffset, int yOffset, int labelWidth, int fieldWidth)
+        {
+            
+        }
+    }
+
     public class ArduinoMenu : ISmartMenu
     {
         private readonly List<IMenuTextField> _boundTextFields;
@@ -19,8 +28,8 @@ namespace Assets.SmartMenu
                             Description = "The COM port for reading movement data (e.g. 'COM1', 'COM2', etc)",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 50, 130, 25), "Movement COM Port: ");
-                                    return GUI.TextField(new Rect(150, 50, 130, 25), x, 4);
+                                    GUI.Label(new Rect(5, 50, 150, 25), "Movement COM Port: ");
+                                    return GUI.TextField(new Rect(160, 50, 160, 25), x, 4);
                                 },
                             Validator = x =>
                                 {
@@ -35,8 +44,8 @@ namespace Assets.SmartMenu
                             Description = "The baud rate for the movement COM",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 80, 130, 25), "Movement COM Baud: ");
-                                    return GUI.TextField(new Rect(150, 80, 130, 25), x.ToString(), 6);
+                                    GUI.Label(new Rect(5, 80, 150, 25), "Movement COM Baud: ");
+                                    return GUI.TextField(new Rect(160, 80, 160, 25), x.ToString(), 6);
                                 },
                             Validator = x => Global.Config.SerialPortBaud = int.Parse(x),
                         },
@@ -46,8 +55,8 @@ namespace Assets.SmartMenu
                             Description = "A path to a folder where the individual profiler runs are saved.",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 110, 130, 25), "Reporting Folder: ");
-                                    return GUI.TextField(new Rect(150, 110, 130, 25), x, 500);
+                                    GUI.Label(new Rect(5, 110, 150, 25), "Reporting Folder: ");
+                                    return GUI.TextField(new Rect(160, 110, 160, 25), x, 500);
                                 },
                             Validator = x =>
                                 {
@@ -62,8 +71,8 @@ namespace Assets.SmartMenu
                             Description = "The 'X' scaling value can be any decimal (e.g. 0.01, -42.5, 100, etc)",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 140, 130, 25), "X Scaling: ");
-                                    return GUI.TextField(new Rect(150, 140, 130, 25), x.ToString(), 6);
+                                    GUI.Label(new Rect(5, 140, 150, 25), "X Scaling: ");
+                                    return GUI.TextField(new Rect(160, 140, 160, 25), x.ToString(), 6);
                                 },
                             Validator = x => Global.Config.ScaleX = float.Parse(x),
                         },
@@ -73,8 +82,8 @@ namespace Assets.SmartMenu
                             Description = "The 'Y' scaling value can be any decimal (e.g. 0.01, -42.5, 100, etc)",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 170, 130, 25), "Y Scaling: ");
-                                    return GUI.TextField(new Rect(150, 170, 130, 25), x.ToString(), 6);
+                                    GUI.Label(new Rect(5, 170, 150, 25), "Y Scaling: ");
+                                    return GUI.TextField(new Rect(160, 170, 160, 25), x.ToString(), 6);
                                 },
                             Validator = x => Global.Config.ScaleY = float.Parse(x),
                         },
@@ -84,8 +93,8 @@ namespace Assets.SmartMenu
                             Description = "The 'Z' scaling value can be any decimal (e.g. 0.01, -42.5, 100, etc)",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 200, 130, 25), "Z Scaling: ");
-                                    return GUI.TextField(new Rect(150, 200, 130, 25), x.ToString(), 6);
+                                    GUI.Label(new Rect(5, 200, 150, 25), "Z Scaling: ");
+                                    return GUI.TextField(new Rect(160, 200, 160, 25), x.ToString(), 6);
                                 },
                             Validator = x => Global.Config.ScaleZ = float.Parse(x),
                         },
@@ -95,8 +104,8 @@ namespace Assets.SmartMenu
                             Description = "The smoothing value can be any decimal (e.g. 0.01, -42.5, 100, etc)",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 230, 130, 25), "Smoothing: ");
-                                    return GUI.TextField(new Rect(150, 230, 130, 25), x.ToString(), 6);
+                                    GUI.Label(new Rect(5, 230, 150, 25), "Smoothing: ");
+                                    return GUI.TextField(new Rect(160, 230, 160, 25), x.ToString(), 6);
                                 },
                             Validator = x => Global.Config.Smoothing = float.Parse(x),
                         },
@@ -105,7 +114,7 @@ namespace Assets.SmartMenu
 
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(Screen.width/2 - 200, Screen.height/2 - 160, 400, 400));
+            GUI.BeginGroup(new Rect(Screen.width/2 - 200, Screen.height/2 - 160, 400, 600));
 
             GUI.Box(new Rect(0, 0, 400, 400), "");
 

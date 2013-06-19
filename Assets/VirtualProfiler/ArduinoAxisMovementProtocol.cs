@@ -16,7 +16,6 @@ namespace Assets.VirtualProfiler
 
         public static byte[] ParseFromStream(MemoryStream stream)
         {
-            // TODO KPH: use using on the MS.
             using (var dataRecord = new MemoryStream())
             {
                 var bytesRead = 1;

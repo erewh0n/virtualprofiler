@@ -19,5 +19,7 @@ namespace Assets.VirtualProfiler
         public int SerialPortBaud = 9600;
 
         public bool DebugLoggingEnabled = true;
+
+        public bool EnablePathRenderer = false;
     }
 }

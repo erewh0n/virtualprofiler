@@ -7,7 +7,6 @@ namespace Assets.VirtualProfiler
 {
     public class SerialPortAdapter : IStreamAdapter
     {
-        public MemoryStream DataStream { get; private set; }
         private readonly SerialPort _serialPort =
             new SerialPort(
                 Global.Config.SerialPortMovementInput,
@@ -18,9 +17,12 @@ namespace Assets.VirtualProfiler
 
         public SerialPortAdapter()
         {
-            _serialPort.Open();
             _serialPort.ReadTimeout = 5; // in milliseconds
-            DataStream = new MemoryStream();
+            _serialPort.DtrEnable = true;
+            _serialPort.RtsEnable = true;
+
+            _serialPort.Open();
+
             Logger.Debug("Serial port opened.");
         }
 

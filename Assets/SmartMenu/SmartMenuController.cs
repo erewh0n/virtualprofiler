@@ -1,6 +1,5 @@
 ﻿using System;
 using Assets.VirtualProfiler;
-using UnityEngine;
 
 namespace Assets.SmartMenu
 {
