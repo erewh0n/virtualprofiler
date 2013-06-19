@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Ports;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
@@ -17,10 +18,12 @@ namespace Assets.VirtualProfiler
 
         public SerialPortAdapter()
         {
-            _serialPort.ReadTimeout = 5; // in milliseconds
+            _serialPort.ReadTimeout = 5; // In milliseconds.
+            // TODO KPH: probably want this config'd.
             _serialPort.DtrEnable = true;
             _serialPort.RtsEnable = true;
 
+            Thread.Sleep(500); // Play nice.
             _serialPort.Open();
 
             Logger.Debug("Serial port opened.");
