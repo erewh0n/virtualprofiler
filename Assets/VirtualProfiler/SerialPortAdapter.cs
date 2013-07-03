@@ -2,31 +2,34 @@
 using System.IO;
 using System.IO.Ports;
 using System.Threading;
-using UnityEngine;
+
 
 namespace Assets.VirtualProfiler
 {
+
     public class SerialPortAdapter : IStreamAdapter
     {
-        private readonly SerialPort _serialPort =
-            new SerialPort(
-                Global.Config.SerialPortMovementInput,
-                Global.Config.SerialPortBaud,
-                Parity.None,
-                8,
-                StopBits.One);
+        private readonly SerialPort _serialPort;
 
-        public SerialPortAdapter()
+        public SerialPortAdapter(string comPort, int baud)
         {
-            _serialPort.ReadTimeout = 5; // In milliseconds.
-            // TODO KPH: probably want this config'd.
-            _serialPort.DtrEnable = true;
-            _serialPort.RtsEnable = true;
+            _serialPort =
+                        new SerialPort(
+                            comPort,
+                            baud,
+                            Parity.None,
+                            8,
+                            StopBits.One)
+                            {
+                                ReadTimeout = 5,
+                                DtrEnable = true,
+                                RtsEnable = true
+                            };
 
             Thread.Sleep(500); // Play nice.
             _serialPort.Open();
 
-            Logger.Debug("Serial port opened.");
+            Logger.Debug(string.Format("Serial port opened on {0}.", comPort));
         }
 
         public int WriteToStream(MemoryStream buffer)
@@ -55,4 +58,5 @@ namespace Assets.VirtualProfiler
             _serialPort.Close();
         }
     }
+
 }

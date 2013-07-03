@@ -1,6 +1,4 @@
-﻿using System;
-using Assets.VirtualProfiler;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.SmartMenu
 {
@@ -8,35 +6,23 @@ namespace Assets.SmartMenu
     {
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(Screen.width / 2 - 200, Screen.height / 2 - 200, 400, 35));
+            GUI.BeginGroup(new Rect(Screen.width / 2 - 250, Screen.height / 2 - 250, 500, 35));
 
-            GUI.Box(new Rect(0, 0, 400, 35), "");
+            GUI.Box(new Rect(0, 0, 500, 35), "");
 
-            if (GUI.Button(new Rect(5, 5, 110, 25), "Start New Run..."))
+            if (GUI.Button(new Rect(5, 5, 115, 25), "Start New Run..."))
             {
-                try
-                {
-                    Global.Launcher.Start();
-                }
-                catch (Exception e)
-                {
-                    try
-                    {
-                        Global.Launcher.Stop();
-                    }
-                    catch
-                    {
-                    }
-                    return new ConfirmationDialogMenu("Profiler", string.Format("There was a problem while starting the profiler: {0}", e.Message), this);
-                }
-
-                return new RunningMenu();
+                return new NewRunMenu();
             }
-            if (GUI.Button(new Rect(120, 5, 110, 25), "Arduino Setup..."))
+            if (GUI.Button(new Rect(125, 5, 115, 25), "Arduino Setup..."))
             {
                 return new ArduinoMenu();
             }
-            if (GUI.Button(new Rect(325, 5, 70, 25), "Exit"))
+            if (GUI.Button(new Rect(245, 5, 115, 25), "Replay..."))
+            {
+                return new ReplayMenu();
+            }
+            if (GUI.Button(new Rect(425, 5, 70, 25), "Exit"))
             {
                 Application.Quit();
             }

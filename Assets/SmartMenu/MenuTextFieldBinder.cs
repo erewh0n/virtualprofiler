@@ -33,7 +33,7 @@ namespace Assets.SmartMenu
             }
             catch (Exception e)
             {
-                Logger.Debug(string.Format("Failed to update object {0} to: {1}", Description, _textField));
+                Logger.Warning(string.Format("Failed to update object {0} to: {1}", Description, _textField), e);
                 if (ErrorHandler != null) ErrorHandler.Invoke();
                 return false;
             }

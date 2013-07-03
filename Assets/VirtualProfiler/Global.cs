@@ -4,23 +4,23 @@ namespace Assets.VirtualProfiler
 {
     public class Global
     {
-        private static Configuration _config;
-        public static Configuration Config
+        private static GlobalConfiguration _config;
+        public static GlobalConfiguration Config
         {
             get
             {
                 return _config ??
-                       (_config = Object.FindObjectOfType(typeof (Configuration)) as Configuration);
+                       (_config = new GlobalConfiguration());
             }
         }
 
-        private static VirtualProfileLauncher _launcher;
-        public static VirtualProfileLauncher Launcher
+        private static VirtualProfiler _launcher;
+        public static VirtualProfiler Launcher
         {
             get
             {
                 return _launcher ??
-                       (_launcher = new VirtualProfileLauncher());
+                       (_launcher = new VirtualProfiler());
             }
         }
     }

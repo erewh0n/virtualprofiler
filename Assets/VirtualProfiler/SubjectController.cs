@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class SubjectController : MonoBehaviour, IDisposable
+    public class SubjectController : MonoBehaviour
     {
         private Transform _subject;
         private UnityMovementDriver _driver;
@@ -26,9 +26,9 @@ namespace Assets.VirtualProfiler
 
         public void DetachDriver()
         {
-            Dispose();
             _moving = false;
             _delta = Vector3.zero;
+            _driver = null;
         }
 
         public void Start()
@@ -36,11 +36,6 @@ namespace Assets.VirtualProfiler
             _subject = transform;
             _driver = null;
             _lineRenderer = GetComponent<LineRenderer>();
-        }
-
-        public void OnApplicationQuit()
-        {
-            Dispose();
         }
 
         private Vector3 Scale(Vector3 vector)
@@ -99,7 +94,7 @@ namespace Assets.VirtualProfiler
                 }
                 var oldPosition = _subject.position;
                 var vectors = _driver.GetVectors().ToList();
-                vectors.Add(new Vector3(0, 10, 0.25f));
+                // vectors.Add(new Vector3(0, 10, 0.25f));
                 var summedVector = vectors.Aggregate(Vector3.zero, (current, vector) => current + vector);
 
                 if (summedVector == Vector3.zero) return;
@@ -119,13 +114,6 @@ namespace Assets.VirtualProfiler
             }
         }
 
-        public void Dispose()
-        {
-            if (_driver != null)
-                _driver.Dispose();
-
-            _driver = null;
-        }
     }
 
 }

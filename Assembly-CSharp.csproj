@@ -50,14 +50,16 @@
      <Compile Include="Assets\SmartMenu\ISmartMenu.cs" />
      <Compile Include="Assets\SmartMenu\MainMenuView.cs" />
      <Compile Include="Assets\SmartMenu\MenuTextFieldBinder.cs" />
+     <Compile Include="Assets\SmartMenu\NewRunMenu.cs" />
+     <Compile Include="Assets\SmartMenu\ReplayMenu.cs" />
      <Compile Include="Assets\SmartMenu\RunningMenu.cs" />
      <Compile Include="Assets\SmartMenu\SmartMenuController.cs" />
      <Compile Include="Assets\VirtualProfiler\ArduinoAxisMovementProtocol.cs" />
-     <Compile Include="Assets\VirtualProfiler\Configuration.cs" />
      <Compile Include="Assets\VirtualProfiler\Event.cs" />
      <Compile Include="Assets\VirtualProfiler\EventLogger.cs" />
      <Compile Include="Assets\VirtualProfiler\FeedbackController.cs" />
      <Compile Include="Assets\VirtualProfiler\Global.cs" />
+     <Compile Include="Assets\VirtualProfiler\GlobalConfiguration.cs" />
      <Compile Include="Assets\VirtualProfiler\IStreamAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\Logger.cs" />
      <Compile Include="Assets\VirtualProfiler\ReplayAdapter.cs" />
@@ -65,8 +67,9 @@
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />
      <Compile Include="Assets\VirtualProfiler\SubjectController.cs" />
      <Compile Include="Assets\VirtualProfiler\UnityMovementDriver.cs" />
-     <Compile Include="Assets\VirtualProfiler\VirtualProfileLauncher.cs" />
+     <Compile Include="Assets\VirtualProfiler\VirtualProfiler.cs" />
      <Compile Include="Assets\VirtualProfiler\VirtualProfilerMenuController.cs" />
+     <Compile Include="Assets\VirtualProfiler\VirtualProfilerRunConfiguration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

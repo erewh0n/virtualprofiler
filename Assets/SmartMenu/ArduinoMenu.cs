@@ -5,15 +5,6 @@ using UnityEngine;
 
 namespace Assets.SmartMenu
 {
-    public class LabeledField
-    {
-
-        public LabeledField(int xOffset, int yOffset, int labelWidth, int fieldWidth)
-        {
-            
-        }
-    }
-
     public class ArduinoMenu : ISmartMenu
     {
         private readonly List<IMenuTextField> _boundTextFields;

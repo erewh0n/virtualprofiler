@@ -50,7 +50,7 @@ namespace Assets.VirtualProfiler
                 currentPosition = _buffer.Position;
                 var axisStringData = Encoding.UTF8.GetString(axisData);
 
-                _logger.Write(new Event(timestamp, axisStringData));
+                if (_logger != null) _logger.Write(new Event(timestamp, axisStringData));
                 try
                 {
                     vectors.Add(ArduinoAxisMovementProtocol.ToVector(axisStringData));
