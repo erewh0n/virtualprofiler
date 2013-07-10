@@ -32,6 +32,8 @@ namespace Assets.VirtualProfiler
             Logger.Debug(string.Format("Serial port opened on {0}.", comPort));
         }
 
+        // TODO KPH: So currently this just reads everything available on the port
+        // TODO KPH: for performance, we may want to try limiting the read time/size.
         public int WriteToStream(MemoryStream buffer)
         {
             var bytesWritten = 0;
