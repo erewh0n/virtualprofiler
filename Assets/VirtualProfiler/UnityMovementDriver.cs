@@ -79,6 +79,7 @@ namespace Assets.VirtualProfiler
         public void Dispose()
         {
             _adapter.Dispose();
+            _logger.Dispose();
         }
 
     }

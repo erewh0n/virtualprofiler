@@ -28,11 +28,14 @@ namespace Assets.VirtualProfiler
     public class EventStreamWriter : IDisposable
     {
         private const string Version = "1.0";
-        private readonly FileStream _stream;
+        private StringWriter _buffer;
+        private string _eventFilePath;
         
-        public EventStreamWriter(string streamFileName)
+        public EventStreamWriter(string eventFilePath)
         {
-            _stream = new FileStream(streamFileName.ValidateStringAsFilePath(), FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+            _buffer = new StringWriter();
+            _eventFilePath = eventFilePath;
+
             WriteHeader();
         }
 
@@ -44,25 +47,20 @@ namespace Assets.VirtualProfiler
         public void Write(IEnumerable<Event> events)
         {
             if (events == null) return;
-            foreach (var bytes in events.Select(@event => Encoding.UTF8.GetBytes(@event.ToString())))
-            {
-                _stream.Write(bytes, 0, bytes.Length);
-                _stream.Flush();
-            }
+
+            foreach (var @event in events)
+                _buffer.Write(@event.ToString());
         }
 
         private void WriteHeader()
         {
             // TODO KPH: this should be done by the Event class.
-            var bytes = Encoding.UTF8.GetBytes(string.Format("[EventLog({0}) Timestamp:{1}]{2}", Version, DateTime.UtcNow, Environment.NewLine));
-            _stream.Write(bytes, 0, bytes.Length);
-            _stream.Flush();
+            _buffer.Write(string.Format("[EventLog({0}) Timestamp:{1}]{2}", Version, DateTime.UtcNow, Environment.NewLine));
         }
 
         public void Dispose()
         {
-            _stream.Close();
-            System.GC.SuppressFinalize(_stream);
+            File.WriteAllText(_eventFilePath, _buffer.ToString());
         }
 
     }

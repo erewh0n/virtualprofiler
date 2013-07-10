@@ -66,6 +66,7 @@
      <Compile Include="Assets\VirtualProfiler\SerialPortAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />
      <Compile Include="Assets\VirtualProfiler\SubjectController.cs" />
+     <Compile Include="Assets\VirtualProfiler\SubjectLogger.cs" />
      <Compile Include="Assets\VirtualProfiler\UnityMovementDriver.cs" />
      <Compile Include="Assets\VirtualProfiler\VirtualProfiler.cs" />
      <Compile Include="Assets\VirtualProfiler\VirtualProfilerMenuController.cs" />
