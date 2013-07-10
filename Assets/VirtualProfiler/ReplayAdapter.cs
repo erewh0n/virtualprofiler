@@ -29,7 +29,8 @@ namespace Assets.VirtualProfiler
         public int WriteToStream(MemoryStream stream)
         {
             var numWritten = 0;
-            while (Events.Count > 0 && Events.Peek().DeltaTime < Time.time)
+            // TODO KPH: revisit this.  Allow for real time seeking (e.g. play, pause, ff, rw, etc)
+            while (Events.Count > 0)// && Events.Peek().DeltaTime < Time.time)
             {
                 var @event = Events.Pop();
                 var buffer = Encoding.UTF8.GetBytes((string) @event.Payload);

@@ -19,5 +19,7 @@ namespace Assets.VirtualProfiler
         public bool DebugLoggingEnabled = true;
 
         public bool EnablePathRenderer = false;
+
+        public bool EnableSubjectLogging = true;
     }
 }

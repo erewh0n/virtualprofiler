@@ -31,10 +31,14 @@ namespace Assets.VirtualProfiler
             SaveStatePath = Path.Combine(RunFolder,
                                            string.Format("VirtualProfileRun.{0}.cfg",
                                                          Timestamp.ToString("yyyyMMdd-HHmmss")));
+            SubjectPositionPath = Path.Combine(RunFolder,
+                                               string.Format("SubjectPosition.{0}.log",
+                                                             Timestamp.ToString("yyyyMMdd-HHmmss")));
             Notes = notes;
         }
 
         public string MovementLogPath { get; private set; }
+        public string SubjectPositionPath { get; private set; }
         public string SaveStatePath { get; private set; }
         public string RunFolder { get; private set; }
         public string Notes { get; private set; }

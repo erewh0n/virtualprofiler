@@ -11,7 +11,7 @@ namespace Assets.SmartMenu
 
             if (GUI.Button(new Rect(5, 5, 80, 25), "Stop"))
             {
-                Global.Launcher.Stop();
+                Global.Launcher.StopAndFinalizeRun();
                 return new MainMenuView();
             }
 

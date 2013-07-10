@@ -6,23 +6,27 @@ namespace Assets.SmartMenu
     {
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(Screen.width / 2 - 250, Screen.height / 2 - 250, 500, 35));
+            GUI.BeginGroup(new Rect(5, 5, 135, 140));
 
-            GUI.Box(new Rect(0, 0, 500, 35), "");
+            GUI.Box(new Rect(0, 0, 110, 125), "");
 
-            if (GUI.Button(new Rect(5, 5, 115, 25), "Start New Run..."))
+            GUI.skin.button.fontSize = 10;
+            GUI.skin.label.fontSize = 10;
+            GUI.skin.textArea.fontSize = 11;
+            GUI.skin.textField.fontSize = 11;
+            if (GUI.Button(new Rect(5, 5, 100, 25), "Start New Run..."))
             {
                 return new NewRunMenu();
             }
-            if (GUI.Button(new Rect(125, 5, 115, 25), "Arduino Setup..."))
+            if (GUI.Button(new Rect(5, 35, 100, 25), "Arduino Setup..."))
             {
                 return new ArduinoMenu();
             }
-            if (GUI.Button(new Rect(245, 5, 115, 25), "Replay..."))
+            if (GUI.Button(new Rect(5, 65, 100, 25), "Replay..."))
             {
                 return new ReplayMenu();
             }
-            if (GUI.Button(new Rect(425, 5, 70, 25), "Exit"))
+            if (GUI.Button(new Rect(5, 95, 100, 25), "Exit"))
             {
                 Application.Quit();
             }

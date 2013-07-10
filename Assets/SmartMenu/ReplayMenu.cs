@@ -16,17 +16,17 @@ namespace Assets.SmartMenu
                 {
                     new MenuTextFieldBinder<string>(_replayFolder)
                         {
-                            Name = "Folder name",
-                            Description = "Name for this run",
+                            Name = "Movement log file",
+                            Description = "Path to movement log file that should be replayed.",
                             FieldUpdater = x =>
                                 {
-                                    GUI.Label(new Rect(5, 50, 150, 25), "Name for this run: ");
-                                    return GUI.TextField(new Rect(160, 50, 220, 25), x, 512);
+                                    GUI.Label(new Rect(5, 10, 100, 20), "Movement log file:");
+                                    return GUI.TextField(new Rect(5, 35, 140, 20), x, 512);
                                 },
                             Validator = x =>
                                 {
                                     if (string.IsNullOrEmpty(x))
-                                        throw new ArgumentException("A valid folder name must be specified.");
+                                        throw new ArgumentException("A valid movement log file name must be specified.");
                                     _replayFolder = x;
                                 },
                         },
@@ -35,11 +35,17 @@ namespace Assets.SmartMenu
 
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(Screen.width / 2 - 200, Screen.height / 2 - 160, 400, 600));
+            GUI.BeginGroup(new Rect(5, 5, 150, 150));
 
-            GUI.Box(new Rect(0, 0, 400, 300), "");
+            GUI.Box(new Rect(0, 0, 150, 150), "");
 
-            if (GUI.Button(new Rect(60, 270, 110, 25), "Replay!"))
+            if (GUI.Button(new Rect(5, 80, 80, 20), "Cancel"))
+            {
+                Global.Launcher.DisableStreamAdapter();
+                return new MainMenuView();
+            }
+
+            if (GUI.Button(new Rect(5, 105, 80, 20), "Replay!"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
@@ -57,12 +63,6 @@ namespace Assets.SmartMenu
                 {
                     return new ConfirmationDialogMenu("Profiler", string.Format("There was a problem while loading replay information: {0}", e.Message), this);
                 }
-            }
-
-            if (GUI.Button(new Rect(230, 270, 110, 25), "Cancel"))
-            {
-                Global.Launcher.DisableStreamAdapter();
-                return new MainMenuView();
             }
 
             foreach (var boundField in _boundTextFields)

@@ -1,11 +1,36 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
+
+    public class SubjectLogger
+    {
+        private readonly string _path;
+        private StringWriter _buffer = new StringWriter();
+
+        public SubjectLogger(string path)
+        {
+            _path = path;
+            File.WriteAllText(_path, "");
+            File.Delete(_path);
+        }
+
+        public void AddVector(Vector3 positionVector, Quaternion rotation)
+        {
+            _buffer.WriteLine("{0},{1},{2},{3}", positionVector.x, positionVector.y, positionVector.z, rotation.y);
+        }
+
+        public void Save()
+        {
+            File.WriteAllText(_path, _buffer.ToString());
+        }
+    }
+
     public class SubjectController : MonoBehaviour
     {
         private Transform _subject;
@@ -14,6 +39,8 @@ namespace Assets.VirtualProfiler
         private bool _moving;
         private LineRenderer _lineRenderer;
         private List<Vector3> _lineSegments = new List<Vector3>();
+
+        public SubjectLogger SubjectLogger { get; set; }
 
         public void AttachDriver(UnityMovementDriver driver)
         {
@@ -94,7 +121,6 @@ namespace Assets.VirtualProfiler
                 }
                 var oldPosition = _subject.position;
                 var vectors = _driver.GetVectors().ToList();
-                // vectors.Add(new Vector3(0, 10, 0.25f));
                 var summedVector = vectors.Aggregate(Vector3.zero, (current, vector) => current + vector);
 
                 if (summedVector == Vector3.zero) return;
@@ -107,6 +133,9 @@ namespace Assets.VirtualProfiler
     
                 if (Global.Config.EnablePathRenderer)
                     RenderVirtualPath(oldPosition, vectors.ToList());
+
+                if (SubjectLogger != null)
+                    SubjectLogger.AddVector(_subject.position, _subject.rotation);
             }
             catch (Exception e)
             {

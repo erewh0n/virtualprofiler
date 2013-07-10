@@ -7,6 +7,11 @@ namespace Assets.VirtualProfiler
 
     public class VirtualProfilerMenuController : MonoBehaviour
     {
+        public void Start()
+        {
+            Global.Launcher.LoadGlobalConfiguration();
+        }
+
         private readonly SmartMenuController _menuController = new SmartMenuController(new MainMenuView());
 
         public void OnGUI()

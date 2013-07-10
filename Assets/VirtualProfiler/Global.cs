@@ -12,6 +12,7 @@ namespace Assets.VirtualProfiler
                 return _config ??
                        (_config = new GlobalConfiguration());
             }
+            set { _config = value; }
         }
 
         private static VirtualProfiler _launcher;

@@ -60,8 +60,17 @@ namespace Assets.VirtualProfiler
             EnableStreamAdapter();
 
             var config = new VirtualProfilerRunConfiguration(runFolder, notes);
-            SaveProfilerConfiguration(config);
+            SaveProfilerConfiguration(config, config.SaveStatePath);
+            
+            if (Global.Config.EnableSubjectLogging)
+                _controller.SubjectLogger = new SubjectLogger(config.SubjectPositionPath);
+
             StartProfiling(new EventStreamWriter(config.MovementLogPath));
+        }
+
+        public void StopAndFinalizeRun()
+        {
+            _controller.SubjectLogger.Save();
         }
 
         public void Stop()
@@ -81,7 +90,7 @@ namespace Assets.VirtualProfiler
             return ms.Length > 0;
         }
 
-        private void SaveProfilerConfiguration(VirtualProfilerRunConfiguration config)
+        private void SaveProfilerConfiguration(VirtualProfilerRunConfiguration config, string path)
         {
             var saveState = new VirtualProfilerSaveState
             {
@@ -96,7 +105,7 @@ namespace Assets.VirtualProfiler
                 serializer.Serialize(ms, saveState);
                 saveStateFileContents = Encoding.UTF8.GetString(ms.ToArray());
             }
-            File.WriteAllText(config.SaveStatePath, saveStateFileContents);
+            File.WriteAllText(path, saveStateFileContents);
         }
 
         private void StartProfiling(EventStreamWriter eventStreamWriter = null)
@@ -110,6 +119,31 @@ namespace Assets.VirtualProfiler
                 Logger.Error("Failed while starting the virtual profiler.", e);
                 throw;
             }
+        }
+
+        public void LoadGlobalConfiguration()
+        {
+            var serializer = new XmlSerializer(typeof (VirtualProfilerSaveState));
+            try
+            {
+                var globalConfigText = File.ReadAllText("VirtualProfilerGlobal.cfg");
+                var config = serializer.Deserialize(new StringReader(globalConfigText)) as VirtualProfilerSaveState;
+
+                if (config == null)
+                    SaveGlobalConfiguration();
+                else
+                    Global.Config = config.GlobalSettings;
+            }
+            catch (Exception e)
+            {
+                // The file doesn't exist, or is corrupt.  Just write out fresh.
+                SaveGlobalConfiguration();
+            }
+        }
+
+        public void SaveGlobalConfiguration()
+        {
+            SaveProfilerConfiguration(null, "VirtualProfilerGlobal.cfg");
         }
 
         public void OnApplicationQuit()
