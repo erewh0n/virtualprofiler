@@ -29,13 +29,13 @@ namespace Assets.VirtualProfiler
         public int WriteToStream(MemoryStream stream)
         {
             var numWritten = 0;
+            var count = 0;
             // TODO KPH: revisit this.  Allow for real time seeking (e.g. play, pause, ff, rw, etc)
-            while (Events.Count > 0)// && Events.Peek().DeltaTime < Time.time)
+            while (Events.Count > 0 && count++ < 100)// Events.Peek().DeltaTime < Time.time
             {
                 var @event = Events.Pop();
                 var buffer = Encoding.UTF8.GetBytes((string) @event.Payload);
                 stream.Write(buffer, 0, buffer.Length);
-                stream.WriteByte((byte) 'e');
                 numWritten += buffer.Length + 1;
             }
 

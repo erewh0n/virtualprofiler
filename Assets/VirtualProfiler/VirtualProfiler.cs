@@ -70,7 +70,10 @@ namespace Assets.VirtualProfiler
 
         public void StopAndFinalizeRun()
         {
-            _controller.SubjectLogger.Save();
+            if (_controller.SubjectLogger != null)
+                _controller.SubjectLogger.Save();
+
+            Stop();
         }
 
         public void Stop()
