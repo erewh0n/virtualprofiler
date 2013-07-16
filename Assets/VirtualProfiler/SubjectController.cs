@@ -16,6 +16,7 @@ namespace Assets.VirtualProfiler
         private bool _laserIsOn;
 
         public int LaserDuration = 500; // Sane default
+
         public SubjectLogger SubjectLogger { get; set; }
         public bool IsSimpleMovement
         {

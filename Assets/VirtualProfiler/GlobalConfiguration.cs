@@ -21,8 +21,5 @@ namespace Assets.VirtualProfiler
         public bool EnablePathRenderer = false;
 
         public bool EnableSubjectLogging = true;
-
-        public int MaxRecordsToReadPerFrame = 2;
-        public int SkipEveryNFrames = 4;
     }
 }

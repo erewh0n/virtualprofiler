@@ -16,6 +16,8 @@ namespace Assets.VirtualProfiler
 
         public ReplayAdapter(LineRenderer renderer, string replayFile)
         {
+            if (renderer == null)
+                throw new ArgumentException("In order for replay to work properly a LineRenderer component must be attached to a game object!");
             _positions.AddRange(File.ReadAllLines(replayFile));
             _renderer = renderer;
         }
