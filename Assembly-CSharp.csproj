@@ -54,7 +54,6 @@
      <Compile Include="Assets\SmartMenu\ReplayMenu.cs" />
      <Compile Include="Assets\SmartMenu\RunningMenu.cs" />
      <Compile Include="Assets\SmartMenu\SmartMenuController.cs" />
-     <Compile Include="Assets\VirtualProfiler\ArduinoAxisMovementProtocol.cs" />
      <Compile Include="Assets\VirtualProfiler\Event.cs" />
      <Compile Include="Assets\VirtualProfiler\EventLogger.cs" />
      <Compile Include="Assets\VirtualProfiler\FeedbackController.cs" />
@@ -62,6 +61,7 @@
      <Compile Include="Assets\VirtualProfiler\GlobalConfiguration.cs" />
      <Compile Include="Assets\VirtualProfiler\IStreamAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\Logger.cs" />
+     <Compile Include="Assets\VirtualProfiler\MovementProtocolAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\ReplayAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SerialPortAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />

@@ -1,15 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Assets.VirtualProfiler
 {
+    public class ReplayAdapter
+    {
+        private readonly List<string> _positions = new List<string>();
+        private readonly LineRenderer _renderer = null;
+
+        public ReplayAdapter(LineRenderer renderer, string replayFile)
+        {
+            _positions.AddRange(File.ReadAllLines(replayFile));
+            _renderer = renderer;
+        }
+
+        public void RenderPath()
+        {
+            var vectors = (from position in _positions
+                          let coordinates = position.Split(',')
+                          where coordinates.Length == 4
+                          select
+                              new Vector3(float.Parse(coordinates[0]), float.Parse(coordinates[1]),
+                                          float.Parse(coordinates[2]))).ToArray();
+
+            _renderer.SetVertexCount(vectors.Count());
+
+            for (var i = 0; i < vectors.Count(); i++)
+            {
+                _renderer.SetPosition(i, vectors[i]);
+            }
+        }
+    }
+
     public class VirtualProfiler
     {
         private readonly SubjectController _controller;
-        private IStreamAdapter _movementStreamAdapter;
+        private SerialPortAdapter _movementStreamAdapter;
 
         public VirtualProfiler()
         {
@@ -18,11 +50,12 @@ namespace Assets.VirtualProfiler
                 throw new ArgumentException("Could not find the subject controller.  Please attach the 'SubjectController' script to a Unity object.");
         }
 
-        public void StartReplay(string replayFile)
+        //C:\virtualprofiler\SubjectPositionTest.01.log
+        public void RenderReplay(string replayFile)
         {
-            Stop();
-            _movementStreamAdapter = new ReplayAdapter(replayFile);
-            StartProfiling();
+            var replayRenderer = new ReplayAdapter(Object.FindObjectOfType(typeof (LineRenderer)) as LineRenderer, replayFile);
+
+            replayRenderer.RenderPath();
         }
 
         public void EnableStreamAdapter()
@@ -44,7 +77,7 @@ namespace Assets.VirtualProfiler
             if (_movementStreamAdapter == null) return;
             try
             {
-                _movementStreamAdapter.Dispose();
+                _movementStreamAdapter.Close();
                 _movementStreamAdapter = null;
             }
             catch (Exception e)
@@ -87,10 +120,7 @@ namespace Assets.VirtualProfiler
             if (_movementStreamAdapter == null)
                 return false;
 
-            var ms = new MemoryStream();
-            _movementStreamAdapter.WriteToStream(ms);
-
-            return ms.Length > 0;
+            return _movementStreamAdapter.SerialStream.Count() != 0;
         }
 
         private void SaveProfilerConfiguration(VirtualProfilerRunConfiguration config, string path)
@@ -115,7 +145,7 @@ namespace Assets.VirtualProfiler
         {
             try
             {
-                _controller.AttachDriver(new UnityMovementDriver(_movementStreamAdapter, eventStreamWriter));
+                _controller.AttachDriver(new UnityMovementDriver(_movementStreamAdapter, new MovementProtocolAdapter()));
             }
             catch (Exception e)
             {

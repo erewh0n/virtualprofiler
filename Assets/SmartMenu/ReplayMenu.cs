@@ -39,13 +39,13 @@ namespace Assets.SmartMenu
 
             GUI.Box(new Rect(0, 0, 150, 150), "");
 
-            if (GUI.Button(new Rect(5, 80, 80, 20), "Cancel"))
+            if (GUI.Button(new Rect(5, 80, 80, 20), "Done"))
             {
                 Global.Launcher.DisableStreamAdapter();
                 return new MainMenuView();
             }
 
-            if (GUI.Button(new Rect(5, 105, 80, 20), "Replay!"))
+            if (GUI.Button(new Rect(5, 105, 80, 20), "Render Path"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
@@ -56,8 +56,7 @@ namespace Assets.SmartMenu
                 }
                 try
                 {
-                    Global.Launcher.StartReplay(_replayFolder);
-                    return new RunningMenu();
+                    Global.Launcher.RenderReplay(_replayFolder);
                 }
                 catch (Exception e)
                 {

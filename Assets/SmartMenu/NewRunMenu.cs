@@ -65,10 +65,10 @@ namespace Assets.SmartMenu
             {
                 _lastStreamReadTime = DateTime.UtcNow;
                 _isStreamValidAtLeastOnce = true;
-                var style = new GUIStyle {normal = {background = _greenTexture}, alignment = TextAnchor.MiddleCenter};
+                var style = new GUIStyle(GUI.skin.textArea) {normal = {background = _greenTexture}, alignment = TextAnchor.MiddleCenter};
                 GUI.Box(new Rect(5, 5, 120, 15), new GUIContent("Connected."), style);
             }
-            else if (!_isStreamValidAtLeastOnce || DateTime.UtcNow - _lastStreamReadTime > TimeSpan.FromSeconds(2))
+            else if (!_isStreamValidAtLeastOnce || DateTime.UtcNow - _lastStreamReadTime > TimeSpan.FromSeconds(3))
             {
                 var style = new GUIStyle { normal = { background = _redTexture }, alignment = TextAnchor.MiddleCenter };
                 GUI.Box(new Rect(5, 5, 120, 15), new GUIContent("Disconnected."), style);
@@ -76,7 +76,7 @@ namespace Assets.SmartMenu
             else
             {
                 var style = new GUIStyle { normal = { background = _greenTexture }, alignment = TextAnchor.MiddleCenter };
-                GUI.Box(new Rect(5, 5, 120, 15), new GUIContent("Movement stream is active."), style);
+                GUI.Box(new Rect(5, 5, 120, 15), new GUIContent("Connected."), style);
             }
 
             if (GUI.Button(new Rect(5, 230, 80, 25), "Run!"))

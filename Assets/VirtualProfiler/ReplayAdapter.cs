@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class ReplayAdapter : IStreamAdapter
+    public class ReplayAdapter_Old : IStreamAdapter
     {
         public Stack<Event> Events { get; set; }
         
-        public ReplayAdapter(string streamFileName)
+        public ReplayAdapter_Old(string streamFileName)
         {
             if (string.IsNullOrEmpty(streamFileName))
             {

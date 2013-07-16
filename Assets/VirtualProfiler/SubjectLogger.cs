@@ -17,7 +17,7 @@ namespace Assets.VirtualProfiler
 
         public void AddVector(Vector3 positionVector, Quaternion rotation)
         {
-            _buffer.WriteLine("{0},{1},{2},{3}", positionVector.x, positionVector.y, positionVector.z, rotation.y);
+            _buffer.WriteLine("{0},{1},{2},{3}", positionVector.x, positionVector.y, positionVector.z, rotation.eulerAngles.y);
         }
 
         public void Save()

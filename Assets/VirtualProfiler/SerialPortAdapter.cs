@@ -1,13 +1,12 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Threading;
 
 
 namespace Assets.VirtualProfiler
 {
-
-    public class SerialPortAdapter : IStreamAdapter
+    public class SerialPortAdapter
     {
         private readonly SerialPort _serialPort;
 
@@ -21,6 +20,7 @@ namespace Assets.VirtualProfiler
                             8,
                             StopBits.One)
                             {
+                                ReadBufferSize = 50, // No effect?
                                 ReadTimeout = 5,
                                 DtrEnable = true,
                                 RtsEnable = true
@@ -28,37 +28,58 @@ namespace Assets.VirtualProfiler
 
             Thread.Sleep(500); // Play nice.
             _serialPort.Open();
-
-            Logger.Debug(string.Format("Serial port opened on {0}.", comPort));
         }
 
-        // TODO KPH: So currently this just reads everything available on the port
-        // TODO KPH: for performance, we may want to try limiting the read time/size.
-        public int WriteToStream(MemoryStream buffer)
+        public IEnumerable<byte> SerialStream
         {
-            var bytesWritten = 0;
+            get
+            {
+                var sb = ReadFromStream();
+                while (sb != 0)
+                {
+                    yield return sb;
+                    sb = ReadFromStream();
+                }
+            }
+        }
+
+        // TODO KPH: this seems to be broken in Unity. :(
+        public int NumBytesInBuffer
+        {
+            get
+            {
+                return _serialPort.BytesToRead;
+            }
+        }
+
+        public void Write(string data)
+        {
+            _serialPort.Write(data);
+        }
+
+        public void FastForward()
+        {
+            _serialPort.DiscardInBuffer();
+        }
+
+        public void Close()
+        {
+            _serialPort.Close();
+            _serialPort.Dispose();
+        }
+
+        private byte ReadFromStream()
+        {
             try
             {
-                var sb = (byte) _serialPort.ReadByte();
-                while (sb != '\0')
-                {
-                    bytesWritten++;
-                    buffer.WriteByte(sb);
-                    sb = (byte) _serialPort.ReadByte();
-                }
+                return (byte)_serialPort.ReadByte();
             }
             catch (TimeoutException)
             {
-                // We can safely ignore.
             }
-
-            return bytesWritten;
+            return 0;
         }
 
-        public void Dispose()
-        {
-            _serialPort.Close();
-        }
     }
 
 }
