@@ -41,7 +41,7 @@ namespace Assets.SmartMenu
 
             if (GUI.Button(new Rect(5, 80, 80, 20), "Done"))
             {
-                Global.Launcher.DisableStreamAdapter();
+                Global.Launcher.ClearReplay();
                 return new MainMenuView();
             }
 

@@ -38,6 +38,11 @@ namespace Assets.VirtualProfiler
                 _renderer.SetPosition(i, vectors[i]);
             }
         }
+
+        public void Clear()
+        {
+            _renderer.SetVertexCount(0);
+        }
     }
 
     public class VirtualProfiler
@@ -58,6 +63,13 @@ namespace Assets.VirtualProfiler
             var replayRenderer = new ReplayAdapter(Object.FindObjectOfType(typeof (LineRenderer)) as LineRenderer, replayFile);
 
             replayRenderer.RenderPath();
+        }
+
+        public void ClearReplay()
+        {
+            var renderer = Object.FindObjectOfType(typeof(LineRenderer)) as LineRenderer;
+            if (renderer != null)
+                renderer.SetVertexCount(0);
         }
 
         public void EnableStreamAdapter()
