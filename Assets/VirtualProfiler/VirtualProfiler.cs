@@ -26,10 +26,10 @@ namespace Assets.VirtualProfiler
         {
             var vectors = (from position in _positions
                           let coordinates = position.Split(',')
-                          where coordinates.Length == 4
+                          where coordinates.Length == 5
                           select
-                              new Vector3(float.Parse(coordinates[0]), float.Parse(coordinates[1]),
-                                          float.Parse(coordinates[2]))).ToArray();
+                              new Vector3(float.Parse(coordinates[1]), float.Parse(coordinates[2]),
+                                          float.Parse(coordinates[3]))).ToArray();
 
             _renderer.SetVertexCount(vectors.Count());
 
