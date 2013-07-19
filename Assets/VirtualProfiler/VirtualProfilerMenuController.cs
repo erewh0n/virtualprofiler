@@ -10,6 +10,7 @@ namespace Assets.VirtualProfiler
         public void Start()
         {
             Global.Launcher.LoadGlobalConfiguration();
+            Global.Launcher.Initialize();
         }
 
         private readonly SmartMenuController _menuController = new SmartMenuController(new MainMenuView());

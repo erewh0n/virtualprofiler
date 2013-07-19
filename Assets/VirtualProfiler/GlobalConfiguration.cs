@@ -17,9 +17,12 @@ namespace Assets.VirtualProfiler
         public int SerialPortBaud = 9600;
 
         public bool DebugLoggingEnabled = true;
-
-        public bool EnablePathRenderer = false;
-
         public bool EnableSubjectLogging = true;
+
+        public string RuntimeCameraTag = "RuntimeCamera";
+        public string ReplayCameraTag  = "ReplayCamera";
+        public string SurfaceLayerTag  = "SurfaceLayer";
+        public string LineRendererTag  = "LineRenderer";
+        public string ParticleRendererTag = "ParticleRenderer";
     }
 }

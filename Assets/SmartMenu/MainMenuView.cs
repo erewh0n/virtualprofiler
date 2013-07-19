@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.VirtualProfiler;
+using UnityEngine;
 
 namespace Assets.SmartMenu
 {
@@ -20,7 +21,7 @@ namespace Assets.SmartMenu
             }
             if (GUI.Button(new Rect(5, 35, 100, 25), "Arduino Setup..."))
             {
-                return new ArduinoMenu();
+                return new ConfigurationMenu();
             }
             if (GUI.Button(new Rect(5, 65, 100, 25), "Replay..."))
             {

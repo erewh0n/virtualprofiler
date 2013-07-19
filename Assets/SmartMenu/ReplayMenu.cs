@@ -31,6 +31,8 @@ namespace Assets.SmartMenu
                                 },
                         },
                 };
+
+            Global.Launcher.StartReplay();
         }
 
         public ISmartMenu CreateMenu()
@@ -39,13 +41,13 @@ namespace Assets.SmartMenu
 
             GUI.Box(new Rect(0, 0, 150, 150), "");
 
-            if (GUI.Button(new Rect(5, 80, 80, 20), "Done"))
+            if (GUI.Button(new Rect(5, 80, 100, 20), "Exit To Main Menu"))
             {
-                Global.Launcher.ClearReplay();
+                Global.Launcher.StopReplay();
                 return new MainMenuView();
             }
 
-            if (GUI.Button(new Rect(5, 105, 80, 20), "Render Path"))
+            if (GUI.Button(new Rect(5, 105, 100, 20), "Render Path"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
@@ -60,7 +62,8 @@ namespace Assets.SmartMenu
                 }
                 catch (Exception e)
                 {
-                    return new ConfirmationDialogMenu("Profiler", string.Format("There was a problem while loading replay information: {0}", e.Message), this);
+                    Logger.Warning("Problem during replay.", e);
+                    return new ConfirmationDialogMenu("Profiler", string.Format("There was a problem during replay: {0}", e.Message), this);
                 }
             }
 

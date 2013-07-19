@@ -5,13 +5,13 @@ namespace Assets.SmartMenu
     public class ConfirmationDialogMenu : ISmartMenu
     {
         private readonly string _fieldName;
-        private readonly string _fieldDescription;
+        private readonly string _message;
         private readonly ISmartMenu _lastMenu;
 
-        public ConfirmationDialogMenu(string fieldName, string fieldDescription, ISmartMenu lastMenu)
+        public ConfirmationDialogMenu(string fieldName, string message, ISmartMenu lastMenu)
         {
             _fieldName = fieldName;
-            _fieldDescription = fieldDescription;
+            _message = message;
             _lastMenu = lastMenu;
         }
 
@@ -22,7 +22,7 @@ namespace Assets.SmartMenu
             GUI.Box(new Rect(0, 0, 200, 100), "");
 
             GUI.Label(new Rect(5, 5, 190, 60),
-                      new GUIContent(string.Format("{0}: {1}", _fieldName, _fieldDescription)), new GUIStyle
+                      new GUIContent(string.Format("{0}: {1}", _fieldName, _message)), new GUIStyle
                           {
                               fontSize = 11,
                               wordWrap = true,

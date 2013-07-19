@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
@@ -15,9 +16,9 @@ namespace Assets.VirtualProfiler
             File.Delete(_path);
         }
 
-        public void AddVector(Vector3 positionVector, Quaternion rotation)
+        public void AddVector(float time, Vector3 positionVector, Quaternion rotation)
         {
-            _buffer.WriteLine("{0},{1},{2},{3}", positionVector.x, positionVector.y, positionVector.z, rotation.eulerAngles.y);
+            _buffer.WriteLine("{0},{1},{2},{3},{4}", time, positionVector.x, positionVector.y, positionVector.z, rotation.eulerAngles.y);
         }
 
         public void Save()

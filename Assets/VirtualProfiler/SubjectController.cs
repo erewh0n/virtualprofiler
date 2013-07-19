@@ -134,7 +134,7 @@ namespace Assets.VirtualProfiler
                 _moving = false;
 
                 if (SubjectLogger != null)
-                    SubjectLogger.AddVector(_subject.position, _subject.rotation);
+                    SubjectLogger.AddVector(Time.time, _subject.position, _subject.rotation);
             }
             catch (Exception e)
             {

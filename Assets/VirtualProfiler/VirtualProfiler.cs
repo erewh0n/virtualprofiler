@@ -57,19 +57,64 @@ namespace Assets.VirtualProfiler
                 throw new ArgumentException("Could not find the subject controller.  Please attach the 'SubjectController' script to a Unity object.");
         }
 
-        //C:\virtualprofiler\SubjectPositionTest.01.log
+        private LineRenderer LineRenderer
+        {
+            get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as LineRenderer; }
+        }
+
+        private ParticleRenderer ParticleRenderer
+        {
+            get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as ParticleRenderer; }
+        }
+
+        private Camera RuntimeCamera
+        {
+            get { return GameObject.FindGameObjectWithTag(Global.Config.RuntimeCameraTag).camera; }
+        }
+
+        private Camera ReplayCamera
+        {
+            get { return GameObject.FindGameObjectWithTag(Global.Config.ReplayCameraTag).camera; }
+        }
+
+        private GameObject SurfaceLayer
+        {
+            get { return GameObject.FindWithTag(Global.Config.SurfaceLayerTag); }
+        }
+
+        public void StartReplay()
+        {
+            ReplayCamera.enabled = true;
+            RuntimeCamera.enabled = false;
+            SurfaceLayer.renderer.enabled = false;
+            Logger.Debug(string.Format("surface info: {0}, {1}", SurfaceLayer.tag, SurfaceLayer.name));
+        }
+
         public void RenderReplay(string replayFile)
         {
-            var replayRenderer = new ReplayAdapter(Object.FindObjectOfType(typeof (LineRenderer)) as LineRenderer, replayFile);
-
+            var replayRenderer = new ReplayAdapter(LineRenderer, replayFile);
+            
             replayRenderer.RenderPath();
         }
 
-        public void ClearReplay()
+        public void StopReplay()
         {
-            var renderer = Object.FindObjectOfType(typeof(LineRenderer)) as LineRenderer;
-            if (renderer != null)
-                renderer.SetVertexCount(0);
+            if (LineRenderer != null)
+                LineRenderer.SetVertexCount(0);
+
+            ReplayCamera.enabled = false;
+            RuntimeCamera.enabled = true;
+            SurfaceLayer.renderer.enabled = true;
+        }
+
+        public void Initialize()
+        {
+            if (ReplayCamera != null)
+                ReplayCamera.enabled = false;
+            if (RuntimeCamera != null)
+                RuntimeCamera.enabled = true;
+            else
+                (Object.FindObjectOfType(typeof (Camera)) as Camera).enabled = true;
         }
 
         public void EnableStreamAdapter()

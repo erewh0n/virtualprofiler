@@ -22,6 +22,15 @@ namespace Assets.SmartMenu
 
         protected ISmartMenu CreateDefaultMenu()
         {
+            try
+            {
+                return _defaultMenu.CreateMenu();
+            }
+            catch (Exception e)
+            { // TODO KPH: do something here?  Log?
+                Logger.Warning("Exception while generating default menu.", e);
+            }
+
             return _defaultMenu.CreateMenu();
         }
 

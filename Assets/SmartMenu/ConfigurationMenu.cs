@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Assets.SmartMenu
 {
-    public class ArduinoMenu : ISmartMenu
+    public class ConfigurationMenu : ISmartMenu
     {
         private readonly List<IMenuTextField> _boundTextFields;
 
-        public ArduinoMenu()
+        public ConfigurationMenu()
         {
             _boundTextFields = new List<IMenuTextField>
                 {
@@ -100,16 +100,60 @@ namespace Assets.SmartMenu
                                 },
                             Validator = x => Global.Config.Smoothing = float.Parse(x),
                         },
+                    new MenuTextFieldBinder<string>(Global.Config.RuntimeCameraTag)
+                        {
+                            Name = "Runtime camera tag",
+                            Description = "The tag name assigned to the runtime camera.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 230, 120, 20), "Runtime camera tag: ");
+                                    return GUI.TextField(new Rect(130, 230, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.RuntimeCameraTag = x,
+                        },
+                    new MenuTextFieldBinder<string>(Global.Config.ReplayCameraTag)
+                        {
+                            Name = "Replay camera tag",
+                            Description = "The tag name assigned to the replay camera.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 255, 120, 20), "Replay camera tag: ");
+                                    return GUI.TextField(new Rect(130, 255, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.ReplayCameraTag = x,
+                        },
+                    new MenuTextFieldBinder<string>(Global.Config.SurfaceLayerTag)
+                        {
+                            Name = "Surface layer tag",
+                            Description = "The tag name assigned to the surface layer.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 280, 120, 20), "Surface layer tag: ");
+                                    return GUI.TextField(new Rect(130, 280, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.SurfaceLayerTag = x,
+                        },
+                    new MenuTextFieldBinder<string>(Global.Config.LineRendererTag)
+                        {
+                            Name = "Line renderer tag",
+                            Description = "The tag name assigned to the line renderer game object.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 305, 120, 20), "Line renderer tag: ");
+                                    return GUI.TextField(new Rect(130, 305, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.LineRendererTag = x,
+                        },
                 };
         }
 
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(5, 5, 235, 260));
+            GUI.BeginGroup(new Rect(5, 5, 235, 355));
 
-            GUI.Box(new Rect(0, 0, 235, 260), "");
+            GUI.Box(new Rect(0, 0, 235, 355), "");
 
-            if (GUI.Button(new Rect(5, 230, 50, 20), "OK"))
+            if (GUI.Button(new Rect(5, 330, 50, 20), "OK"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
@@ -120,7 +164,7 @@ namespace Assets.SmartMenu
                 }
                 return new MainMenuView();
             }
-            if (GUI.Button(new Rect(130, 230, 100, 20), "Save as default"))
+            if (GUI.Button(new Rect(130, 330, 100, 20), "Save as default"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
