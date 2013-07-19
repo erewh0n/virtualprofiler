@@ -19,7 +19,7 @@ namespace Assets.SmartMenu
             {
                 return new NewRunMenu();
             }
-            if (GUI.Button(new Rect(5, 35, 100, 25), "Arduino Setup..."))
+            if (GUI.Button(new Rect(5, 35, 100, 25), "Configuration..."))
             {
                 return new ConfigurationMenu();
             }
