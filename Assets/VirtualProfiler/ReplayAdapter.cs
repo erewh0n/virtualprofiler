@@ -7,44 +7,87 @@ using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
-    public class ReplayAdapter_Old : IStreamAdapter
+    public class ReplayAdapter : MonoBehaviour
     {
-        public Stack<Event> Events { get; set; }
-        
-        public ReplayAdapter_Old(string streamFileName)
+        private LineRenderer _renderer;
+        private bool _isRealTime;
+        private TimeVector[] _vectors;
+        private int _index;
+        private bool _isStarted;
+
+        public void Start()
         {
-            if (string.IsNullOrEmpty(streamFileName))
-            {
-                throw new ArgumentNullException("streamFileName", "The filename for the movement stream cannot be empty.");
-            }
-            var dir = Path.GetDirectoryName(streamFileName);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            {
-                throw new ArgumentException("The specified file '{0}' does not exist.");
-            }
-            var lines = File.ReadAllLines(streamFileName);
-            Events = new Stack<Event>((from line in lines select Event.Parse(line)).Where(x => x != null).Reverse());
+            _renderer = transform.renderer as LineRenderer;
+            if (_renderer == null)
+                throw new ArgumentException("In order for replay to work properly a LineRenderer component must be attached to the game object!");
+            _index = 0;
+            _isStarted = false;
         }
 
-        public int WriteToStream(MemoryStream stream)
+        public void StartReplay(string replayFile, bool isRealTime)
         {
-            var numWritten = 0;
-            var count = 0;
-            // TODO KPH: revisit this.  Allow for real time seeking (e.g. play, pause, ff, rw, etc)
-            while (Events.Count > 0 && count++ < 100)// Events.Peek().DeltaTime < Time.time
-            {
-                var @event = Events.Pop();
-                var buffer = Encoding.UTF8.GetBytes((string) @event.Payload);
-                stream.Write(buffer, 0, buffer.Length);
-                numWritten += buffer.Length + 1;
-            }
+            Logger.Debug("Start replay");
+            var positions = File.ReadAllLines(replayFile);
+            _isRealTime = isRealTime;
+            _vectors = (from position in positions
+                        let coordinates = position.Split(',')
+                        where coordinates.Length == 5
+                        select
+                            new TimeVector
+                                {
+                                    Vector = new Vector3(float.Parse(coordinates[1]), float.Parse(coordinates[2]),
+                                                         float.Parse(coordinates[3])),
+                                    Time = float.Parse(coordinates[0]),
+                                }).ToArray();
 
-            return numWritten;
+            _isStarted = true;
+            Logger.Debug("Replay started.");
+            RenderPath();
         }
 
-        public void Dispose()
+        public void RenderPath()
         {
-            // NOP.
+            if (!_isRealTime)
+            {
+                Logger.Debug("Rendering: " + _vectors.Count());
+                _renderer.SetVertexCount(_vectors.Count());
+
+                for (var i = 0; i < _vectors.Count(); i++)
+                {
+                    _renderer.SetPosition(i, _vectors[i].Vector);
+                }
+            }
+        }
+
+        public void StopReplay()
+        {
+            _renderer.SetVertexCount(0);
+            _isStarted = false;
+        }
+
+        public void Update()
+        {
+            if (!_isRealTime || !_isStarted)
+                return;
+
+            while ((_index < _vectors.Length) && (Time.time > _vectors[_index++].Time))
+            {
+            }
+
+            _renderer.SetVertexCount(_index);
+            for (var i = 0; i < _index; i++)
+            {
+                _renderer.SetPosition(i, _vectors[i].Vector);
+            }
+        }
+
+        public float PercentDone()
+        {
+            if (!_isRealTime)
+                return 100;
+
+            return ((float) _index) / _vectors.Length * 100.0f;
         }
     }
+
 }

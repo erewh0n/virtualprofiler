@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,42 +8,6 @@ using Object = UnityEngine.Object;
 
 namespace Assets.VirtualProfiler
 {
-    public class ReplayAdapter
-    {
-        private readonly List<string> _positions = new List<string>();
-        private readonly LineRenderer _renderer = null;
-
-        public ReplayAdapter(LineRenderer renderer, string replayFile)
-        {
-            if (renderer == null)
-                throw new ArgumentException("In order for replay to work properly a LineRenderer component must be attached to a game object!");
-            _positions.AddRange(File.ReadAllLines(replayFile));
-            _renderer = renderer;
-        }
-
-        public void RenderPath()
-        {
-            var vectors = (from position in _positions
-                          let coordinates = position.Split(',')
-                          where coordinates.Length == 5
-                          select
-                              new Vector3(float.Parse(coordinates[1]), float.Parse(coordinates[2]),
-                                          float.Parse(coordinates[3]))).ToArray();
-
-            _renderer.SetVertexCount(vectors.Count());
-
-            for (var i = 0; i < vectors.Count(); i++)
-            {
-                _renderer.SetPosition(i, vectors[i]);
-            }
-        }
-
-        public void Clear()
-        {
-            _renderer.SetVertexCount(0);
-        }
-    }
-
     public class VirtualProfiler
     {
         private readonly SubjectController _controller;
@@ -57,9 +20,9 @@ namespace Assets.VirtualProfiler
                 throw new ArgumentException("Could not find the subject controller.  Please attach the 'SubjectController' script to a Unity object.");
         }
 
-        private LineRenderer LineRenderer
+        private ReplayAdapter ReplayAdapter
         {
-            get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as LineRenderer; }
+            get { return Object.FindObjectOfType(typeof(ReplayAdapter)) as ReplayAdapter; }
         }
 
         private ParticleRenderer ParticleRenderer
@@ -87,20 +50,26 @@ namespace Assets.VirtualProfiler
             ReplayCamera.enabled = true;
             RuntimeCamera.enabled = false;
             SurfaceLayer.renderer.enabled = false;
-            Logger.Debug(string.Format("surface info: {0}, {1}", SurfaceLayer.tag, SurfaceLayer.name));
         }
 
-        public void RenderReplay(string replayFile)
+        public void RenderReplay(string replayFile, bool isRealTime)
         {
-            var replayRenderer = new ReplayAdapter(LineRenderer, replayFile);
-            
-            replayRenderer.RenderPath();
+            if (ReplayAdapter != null)
+                ReplayAdapter.StartReplay(replayFile, isRealTime);
+        }
+
+        public float ReplayStatusPercentDone()
+        {
+            if (ReplayAdapter != null)
+                return ReplayAdapter.PercentDone();
+
+            return 100;
         }
 
         public void StopReplay()
         {
-            if (LineRenderer != null)
-                LineRenderer.SetVertexCount(0);
+            if (ReplayAdapter != null)
+                ReplayAdapter.StopReplay();
 
             ReplayCamera.enabled = false;
             RuntimeCamera.enabled = true;
