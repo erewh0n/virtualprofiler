@@ -8,11 +8,105 @@ using Object = UnityEngine.Object;
 
 namespace Assets.VirtualProfiler
 {
+    public class ReplayManager
+    {
+        private static readonly VirtualObjects Objects = new VirtualObjects();
+        private IReplay _activeReplayer;
+
+        public void EnableReplayView()
+        {
+            Objects.ReplayCamera.enabled = true;
+            Objects.RuntimeCamera.enabled = false;
+        }
+
+        public void RealTimeReplay(string replayFile)
+        {
+            if (Objects.ReplayController == null) throw new ApplicationException("No replay adapter found.");
+            _activeReplayer = new RealTimeReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(replayFile));
+            Objects.ReplayController.StartReplay(_activeReplayer);
+        }
+
+        public void InstantReplay(string replayFile)
+        {
+            if (Objects.ReplayController == null) throw new ApplicationException("No replay adapter found.");
+            _activeReplayer = new InstantReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(replayFile));
+            Objects.ReplayController.StartReplay(_activeReplayer);
+        }
+
+        public ReplayStats GetStatsEngine()
+        {
+            if (_activeReplayer == null)
+            {
+                return null;
+            }
+
+            return new ReplayStats(_activeReplayer);
+        }
+
+        public void StopReplay()
+        {
+            if (Objects.ReplayController != null)
+                Objects.ReplayController.StopReplay();
+
+            Objects.ReplayCamera.enabled = false;
+            Objects.RuntimeCamera.enabled = true;
+
+            _activeReplayer = null;
+        }
+
+        public void PlayPause()
+        {
+            if (_activeReplayer == null) return;
+
+            _activeReplayer.PlayPause();
+        }
+
+    }
+
+    public class VirtualObjects
+    {
+        public Camera RuntimeCamera
+        {
+            get { return GameObject.FindGameObjectWithTag(Global.Config.RuntimeCameraTag).camera; }
+        }
+
+        public Camera ReplayCamera
+        {
+            get { return GameObject.FindGameObjectWithTag(Global.Config.ReplayCameraTag).camera; }
+        }
+
+        private ReplayController _replayController;
+        public ReplayController ReplayController
+        {
+            get { return _replayController ?? (_replayController = BuildReplayController()); } //return Object.FindObjectOfType(typeof(ReplayController)) as ReplayController; }
+        }
+
+        private ReplayController BuildReplayController()
+        {
+            var replayObject = new GameObject("vp_replayObject", typeof(LineRenderer));
+            replayObject.AddComponent("ReplayController");
+            var renderer = replayObject.GetComponent<LineRenderer>();
+            renderer.SetWidth(1, 1);
+            renderer.SetColors(new Color(0, 0, 1), new Color(0, 0, 1));
+            return replayObject.GetComponent<ReplayController>();
+        }
+
+        public ParticleRenderer ParticleRenderer
+        {
+            get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as ParticleRenderer; }
+        }
+
+    }
+
     public class VirtualProfiler
     {
         private readonly SubjectController _controller;
         private SerialPortAdapter _movementStreamAdapter;
+        private readonly VirtualObjects _objects = new VirtualObjects();
 
+        public SerialPortAdapter SerialPortAdapter { get { return _movementStreamAdapter; } }
+
+        
         public VirtualProfiler()
         {
             _controller = Object.FindObjectOfType(typeof(SubjectController)) as SubjectController;
@@ -20,68 +114,12 @@ namespace Assets.VirtualProfiler
                 throw new ArgumentException("Could not find the subject controller.  Please attach the 'SubjectController' script to a Unity object.");
         }
 
-        private ReplayAdapter ReplayAdapter
-        {
-            get { return Object.FindObjectOfType(typeof(ReplayAdapter)) as ReplayAdapter; }
-        }
-
-        private ParticleRenderer ParticleRenderer
-        {
-            get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as ParticleRenderer; }
-        }
-
-        private Camera RuntimeCamera
-        {
-            get { return GameObject.FindGameObjectWithTag(Global.Config.RuntimeCameraTag).camera; }
-        }
-
-        private Camera ReplayCamera
-        {
-            get { return GameObject.FindGameObjectWithTag(Global.Config.ReplayCameraTag).camera; }
-        }
-
-        private GameObject SurfaceLayer
-        {
-            get { return GameObject.FindWithTag(Global.Config.SurfaceLayerTag); }
-        }
-
-        public void StartReplay()
-        {
-            ReplayCamera.enabled = true;
-            RuntimeCamera.enabled = false;
-            SurfaceLayer.renderer.enabled = false;
-        }
-
-        public void RenderReplay(string replayFile, bool isRealTime)
-        {
-            if (ReplayAdapter != null)
-                ReplayAdapter.StartReplay(replayFile, isRealTime);
-        }
-
-        public float ReplayStatusPercentDone()
-        {
-            if (ReplayAdapter != null)
-                return ReplayAdapter.PercentDone();
-
-            return 100;
-        }
-
-        public void StopReplay()
-        {
-            if (ReplayAdapter != null)
-                ReplayAdapter.StopReplay();
-
-            ReplayCamera.enabled = false;
-            RuntimeCamera.enabled = true;
-            SurfaceLayer.renderer.enabled = true;
-        }
-
         public void Initialize()
         {
-            if (ReplayCamera != null)
-                ReplayCamera.enabled = false;
-            if (RuntimeCamera != null)
-                RuntimeCamera.enabled = true;
+            if (_objects.ReplayCamera != null)
+                _objects.ReplayCamera.enabled = false;
+            if (_objects.RuntimeCamera != null)
+                _objects.RuntimeCamera.enabled = true;
             else
                 (Object.FindObjectOfType(typeof (Camera)) as Camera).enabled = true;
         }

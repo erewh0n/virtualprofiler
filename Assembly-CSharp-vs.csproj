@@ -44,6 +44,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\GridLayout\Grid.cs" />
+     <Compile Include="Assets\GridLayout\GridButton.cs" />
+     <Compile Include="Assets\GridLayout\GridColumn.cs" />
+     <Compile Include="Assets\GridLayout\GridLabel.cs" />
+     <Compile Include="Assets\GridLayout\GridRow.cs" />
+     <Compile Include="Assets\GridLayout\GridTextField.cs" />
+     <Compile Include="Assets\GridLayout\IGridRenderable.cs" />
      <Compile Include="Assets\SmartMenu\ConfigurationMenu.cs" />
      <Compile Include="Assets\SmartMenu\ConfirmationDialogMenu.cs" />
      <Compile Include="Assets\SmartMenu\IMenuTextField.cs" />
@@ -51,7 +58,9 @@
      <Compile Include="Assets\SmartMenu\MainMenuView.cs" />
      <Compile Include="Assets\SmartMenu\MenuTextFieldBinder.cs" />
      <Compile Include="Assets\SmartMenu\NewRunMenu.cs" />
+     <Compile Include="Assets\SmartMenu\Padding.cs" />
      <Compile Include="Assets\SmartMenu\ReplayMenu.cs" />
+     <Compile Include="Assets\SmartMenu\ReplayRunningMenu.cs" />
      <Compile Include="Assets\SmartMenu\RunningMenu.cs" />
      <Compile Include="Assets\SmartMenu\SmartMenuController.cs" />
      <Compile Include="Assets\VirtualProfiler\Event.cs" />
@@ -60,9 +69,11 @@
      <Compile Include="Assets\VirtualProfiler\Global.cs" />
      <Compile Include="Assets\VirtualProfiler\GlobalConfiguration.cs" />
      <Compile Include="Assets\VirtualProfiler\IStreamAdapter.cs" />
+     <Compile Include="Assets\VirtualProfiler\LaserController.cs" />
      <Compile Include="Assets\VirtualProfiler\Logger.cs" />
      <Compile Include="Assets\VirtualProfiler\MovementProtocolAdapter.cs" />
-     <Compile Include="Assets\VirtualProfiler\ReplayAdapter.cs" />
+     <Compile Include="Assets\VirtualProfiler\ReplayController.cs" />
+     <Compile Include="Assets\VirtualProfiler\ReplayStats.cs" />
      <Compile Include="Assets\VirtualProfiler\SerialPortAdapter.cs" />
      <Compile Include="Assets\VirtualProfiler\SmoothFollow.cs" />
      <Compile Include="Assets\VirtualProfiler\SubjectController.cs" />

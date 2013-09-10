@@ -93,14 +93,12 @@ namespace Assets.VirtualProfiler
             _delta = Vector3.zero;
         }
 
-
         public void Update()
         {
             try
             {
                 if (Input.GetKeyDown(KeyCode.X))
                 {
-                    // Debug.Log("Firing laser!");
                     _driver.SendData("z1");
                     _laserIsOn = true;
                     _laserOnTime = DateTime.UtcNow;
@@ -134,7 +132,7 @@ namespace Assets.VirtualProfiler
                 _moving = false;
 
                 if (SubjectLogger != null)
-                    SubjectLogger.AddVector(Time.time, _subject.position, _subject.rotation);
+                    SubjectLogger.AddVector(_subject.position, _subject.rotation);
             }
             catch (Exception e)
             {

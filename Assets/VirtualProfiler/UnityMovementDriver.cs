@@ -19,20 +19,12 @@ namespace Assets.VirtualProfiler
 
         public IEnumerable<Vector3> GetMovementVectors()
         {
-            FastForwardIfNecessary();
-
             return _vectorAdapter.GetVectors(_movementStream.SerialStream).Take(3);
         }
 
         public void SendData(string data)
         {
             _movementStream.Write(data);
-        }
-
-        // TODO KPH: need to figure out if SerialPort is really broken.
-        public void FastForwardIfNecessary()
-        {
-            // Can't do anything about this...
         }
 
         public void Dispose()

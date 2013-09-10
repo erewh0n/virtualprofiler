@@ -24,5 +24,15 @@ namespace Assets.VirtualProfiler
                        (_launcher = new VirtualProfiler());
             }
         }
+
+        private static ReplayManager _replayManager;
+        public static ReplayManager ReplayManager
+        {
+            get
+            {
+                return _replayManager ??
+                       (_replayManager = new ReplayManager());
+            }
+        }
     }
 }
