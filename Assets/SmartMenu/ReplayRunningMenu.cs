@@ -210,7 +210,7 @@ namespace Assets.SmartMenu
                                             {
                                                 new GridButton("<<", () => { }),
                                                 new GridButton("< ",  () => { }),
-                                                new GridButton(" O ",  () => { Global.ReplayManager.PlayPause(); }),
+                                                new GridButton("PP",  () => { Global.ReplayManager.PlayPause(); }),
                                                 new GridButton(" >",  () => { }),
                                                 new GridButton(">>", () => { }),
                                             }),

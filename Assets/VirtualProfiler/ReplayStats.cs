@@ -20,6 +20,7 @@ namespace Assets.VirtualProfiler
             TotalTime     = EndTime - StartTime;
 
             Velocities = new List<double>();
+            Velocities.Add(0);
             for (var i = 1; i < TotalSegments; i++)
             {
                 Velocities.Add(_vectors[i].Vector.magnitude/((_vectors[i].Time - _vectors[i - 1].Time).TotalMilliseconds));

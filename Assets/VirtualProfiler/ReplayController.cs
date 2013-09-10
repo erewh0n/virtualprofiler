@@ -69,7 +69,7 @@ namespace Assets.VirtualProfiler
         private readonly LineRenderer _renderer;
         private readonly List<TimeVector> _vectors;
 
-        public int SegmentIndex { get { return _vectors.Count(); } }
+        public int SegmentIndex { get { return _vectors.Count() - 1; } }
         public List<TimeVector> Vectors { get { return _vectors; } }
 
         public void PlayPause()
