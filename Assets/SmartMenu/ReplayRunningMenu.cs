@@ -210,17 +210,15 @@ namespace Assets.SmartMenu
                                             {
                                                 new GridButton("<<", () => { }),
                                                 new GridButton("< ",  () => { }),
-                                                new GridButton("PP",  () => { Global.ReplayManager.PlayPause(); }),
+                                                new GridButton("PP",  () => Global.ReplayManager.PlayPause()),
                                                 new GridButton(" >",  () => { }),
                                                 new GridButton(">>", () => { }),
                                             }),
                                         new GridRow(new List<IGridRenderable>
                                             {
                                                 new GridItem(rect =>
-                                                    {
                                                         GUI.HorizontalSlider(rect, statsEngine.CurrentSegment, 0,
-                                                                             statsEngine.TotalSegments);
-                                                    }, 100, 15),
+                                                                             statsEngine.TotalSegments), 100, 15),
                                             })
                                     }),
                                 new GridColumn(new List<IGridRenderable>

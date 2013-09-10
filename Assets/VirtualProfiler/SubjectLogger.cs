@@ -38,9 +38,7 @@ namespace Assets.VirtualProfiler
                    select
                        new TimeVector
                            {
-                               // TODO KPH: remove this!
-                               Time = now + TimeSpan.FromSeconds(double.Parse(coordinates[0])),
-                               //Time = DateTime.Parse(coordinates[0]),
+                               Time = DateTime.Parse(coordinates[0]),
                                Vector = new Vector3(float.Parse(coordinates[1]),
                                                     float.Parse(coordinates[2]),
                                                     float.Parse(coordinates[3])),
