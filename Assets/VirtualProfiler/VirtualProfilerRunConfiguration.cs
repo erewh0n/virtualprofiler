@@ -10,6 +10,21 @@ namespace Assets.VirtualProfiler
     {
         public VirtualProfilerRunConfiguration RunSettings;
         public GlobalConfiguration GlobalSettings;
+        public RuntimeResults RuntimeResults;
+
+        public static VirtualProfilerSaveState LoadFromFile(string filePath)
+        {
+            var configText = File.ReadAllText(filePath);
+            var serializer = new XmlSerializer(typeof(VirtualProfilerSaveState));
+
+            return (VirtualProfilerSaveState)serializer.Deserialize(new MemoryStream(Encoding.UTF8.GetBytes(configText)));
+        }
+    }
+
+    [Serializable]
+    public class RuntimeResults
+    {
+        public float TotalLaserTime { get; set; }
     }
 
     [Serializable]
@@ -46,13 +61,5 @@ namespace Assets.VirtualProfiler
         public bool IsPathRendererEnabled { get; set; }
 
         public DateTime Timestamp { get; private set; }
-
-        public static VirtualProfilerRunConfiguration LoadFromFile(string filePath)
-        {
-            var configText = File.ReadAllText(filePath);
-            var serializer = new XmlSerializer(typeof(VirtualProfilerSaveState));
-
-            return (VirtualProfilerRunConfiguration) serializer.Deserialize(new MemoryStream(Encoding.UTF8.GetBytes(configText)));
-        }
     }
 }

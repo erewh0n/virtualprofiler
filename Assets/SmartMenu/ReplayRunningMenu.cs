@@ -118,6 +118,7 @@ namespace Assets.SmartMenu
         private Grid _grid;
         private Grid _statsView;
         private ISmartMenu _nextMenu;
+        private float _lastSliderValue;
 
         public ReplayRunningMenu()
         {
@@ -133,7 +134,7 @@ namespace Assets.SmartMenu
 
             var statsEngine = Global.ReplayManager.GetStatsEngine();
 
-            _statsView = new Grid(130, 5, 400, 100);
+            _statsView = new Grid(130, 5, 400, 120);
             _statsView.Add(new[]
                 {
                     new GridColumn(new List<IGridRenderable>
@@ -172,17 +173,27 @@ namespace Assets.SmartMenu
                                             new GridRow(new List<IGridRenderable>
                                                 {
                                                     new GridLabel(() => "Current velocity (u/s):", "0123-0123-0123-0123-0"),
-                                                    new GridLabel(() => string.Format("{0:f4}", statsEngine.CurrentVelocity)),
+                                                    new GridLabel(() => string.Format("{0:f2}", statsEngine.CurrentVelocity)),
                                                 }),
                                             new GridRow(new List<IGridRenderable>
                                                 {
-                                                    new GridLabel(() => "Minimum velocity (u/s):", "0123-0123-0123-0123-0"),
-                                                    new GridLabel(() => string.Format("{0:f4}", statsEngine.MinVelocity)),
+                                                    new GridLabel(() => "Average velocity (u/s):", "0123-0123-0123-0123-0"),
+                                                    new GridLabel(() => string.Format("{0:f2}", statsEngine.AverageVelocity)),
                                                 }),
                                             new GridRow(new List<IGridRenderable>
                                                 {
                                                     new GridLabel(() => "Maximum velocity (u/s):", "0123-0123-0123-0123-0"),
-                                                    new GridLabel(() => string.Format("{0:f4}", statsEngine.MaxVelocity)),
+                                                    new GridLabel(() => string.Format("{0:f2}", statsEngine.MaxVelocity)),
+                                                }),
+                                            new GridRow(new List<IGridRenderable>
+                                                {
+                                                    new GridLabel(() => "Total Distance (u):", "0123-0123-0123-0123-0"),
+                                                    new GridLabel(() => string.Format("{0:f2}", statsEngine.TotalDistance)),
+                                                }),
+                                            new GridRow(new List<IGridRenderable>
+                                                {
+                                                    new GridLabel(() => "Total Laser Time (ms):", "0123-0123-0123-0123-0"),
+                                                    new GridLabel(() => string.Format("{0:f2}", Global.Launcher.SaveState.RuntimeResults.TotalLaserTime)),
                                                 }),
                                         }, new Padding(100, 0)),
                                 }),
@@ -199,6 +210,7 @@ namespace Assets.SmartMenu
 
             if (_grid == null)
             {
+                _lastSliderValue = statsEngine.CurrentSegment;
                 _grid = new Grid(5, 5, 120, 100);
                 _grid.Add(new[]
                     {
@@ -217,8 +229,20 @@ namespace Assets.SmartMenu
                                         new GridRow(new List<IGridRenderable>
                                             {
                                                 new GridItem(rect =>
-                                                        GUI.HorizontalSlider(rect, statsEngine.CurrentSegment, 0,
-                                                                             statsEngine.TotalSegments), 100, 15),
+                                                    {
+                                                        var currentValue = GUI.HorizontalSlider(rect, _lastSliderValue, 0,
+                                                                             statsEngine.TotalSegments);
+                                                        if ((int) currentValue != (int) _lastSliderValue)
+                                                        {
+                                                            Global.ReplayManager.SetPosition((int)currentValue);
+                                                            _lastSliderValue = currentValue;
+                                                        }
+                                                        else
+                                                        {
+                                                            _lastSliderValue = statsEngine.CurrentSegment;
+                                                        }
+                                                    }, 100, 15),
+                                                    
                                             })
                                     }),
                                 new GridColumn(new List<IGridRenderable>
@@ -238,4 +262,6 @@ namespace Assets.SmartMenu
             return _nextMenu;
         }
     }
+
+
 }

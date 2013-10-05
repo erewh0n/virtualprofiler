@@ -15,6 +15,16 @@ namespace Assets.VirtualProfiler
             set { _config = value; }
         }
 
+        private static VirtualObjects _objects;
+        public static VirtualObjects Objects
+        {
+            get
+            {
+                return _objects ??
+                       (_objects = new VirtualObjects());
+            }
+        }
+
         private static VirtualProfiler _launcher;
         public static VirtualProfiler Launcher
         {

@@ -13,21 +13,21 @@ namespace Assets.VirtualProfiler
         int SegmentIndex { get; }
         List<TimeVector> Vectors { get; }
         void PlayPause();
+        void SetPosition(int segmentIndex);
     }
 
     public class RealTimeReplayer : IReplay
     {
         private readonly LineRenderer _renderer;
-        private readonly Stack<TimeVector> _inactiveVectors;
-        private readonly List<TimeVector> _activeVectors;
-        private readonly List<TimeVector> _allVectors;
+        private readonly List<TimeVector> _vectors;
+		private readonly List<TimeVector> _activeVectors;
+        private int _index;
         private readonly DateTime _runStartTime;
-        private DateTime? _replayStartTime;
         private bool _isPaused;
         private Stopwatch _elapsed;
 
-        public int SegmentIndex { get { return _activeVectors.Count(); } }
-        public List<TimeVector> Vectors { get { return _allVectors; } }
+        public int SegmentIndex { get { return _index; } }
+        public List<TimeVector> Vectors { get { return _vectors; } }
 
         public void PlayPause()
         {
@@ -36,13 +36,20 @@ namespace Assets.VirtualProfiler
             else _elapsed.Start();
         }
 
+        public void SetPosition(int segmentIndex)
+        {
+            _index = segmentIndex;
+            if (_index >= _vectors.Count) _index = _vectors.Count - 1;
+            if (_index < 0) _index = 0;
+        }
+
         public RealTimeReplayer(LineRenderer renderer, IEnumerable<TimeVector> vectors)
         {
             _renderer = renderer;
-            _inactiveVectors = new Stack<TimeVector>(vectors.Reverse());
-            _activeVectors = new List<TimeVector>();
-            _allVectors = new List<TimeVector>(vectors);
-            _runStartTime = _inactiveVectors.Peek().Time;
+            _index = 0;
+            _vectors = new List<TimeVector>(vectors);
+			_activeVectors = new List<TimeVector>();
+            _runStartTime = _vectors[_index].Time;
             _elapsed = new Stopwatch();
         }
 
@@ -51,9 +58,9 @@ namespace Assets.VirtualProfiler
             if (_isPaused) return;
             if (!_elapsed.IsRunning) _elapsed.Start();
 
-            while ((_inactiveVectors.Count > 0) && ((_elapsed.Elapsed) >= (_inactiveVectors.Peek().Time - _runStartTime)))
+            while ((_index < _vectors.Count) && ((_elapsed.Elapsed) >= (_vectors[_index].Time - _runStartTime)))
             {
-                _activeVectors.Add(_inactiveVectors.Pop());
+                _activeVectors.Add(_vectors[_index++]);
             }
 
             _renderer.SetVertexCount(_activeVectors.Count());
@@ -68,27 +75,37 @@ namespace Assets.VirtualProfiler
     {
         private readonly LineRenderer _renderer;
         private readonly List<TimeVector> _vectors;
+        private int _index;
 
-        public int SegmentIndex { get { return _vectors.Count() - 1; } }
+        public int SegmentIndex { get { return _index; } }
         public List<TimeVector> Vectors { get { return _vectors; } }
 
         public void PlayPause()
         { }
 
+        public void SetPosition(int index)
+        {
+            _index = index;
+            if (_index >= _vectors.Count) _index = _vectors.Count - 1;
+            if (_index < 0) _index = 0;
+        }
+
         public InstantReplayer(LineRenderer renderer, IEnumerable<TimeVector> vectors)
         {
             _renderer = renderer;
             _vectors = vectors.ToList();
+            _index = _vectors.Count() - 1;
         }
 
         public void Render()
         {
-            _renderer.SetVertexCount(_vectors.Count());
-            for (var i = 0; i < _vectors.Count(); i++)
+            _renderer.SetVertexCount(_index);
+            for (var i = 0; i < _index; i++)
             {
                 _renderer.SetPosition(i, _vectors[i].Vector);
             }
         }
+
     }
 
     public class ReplayController : MonoBehaviour

@@ -19,17 +19,21 @@ namespace Assets.VirtualProfiler
             Objects.RuntimeCamera.enabled = false;
         }
 
-        public void RealTimeReplay(string replayFile)
+        public void RealTimeReplay(string saveStateFile)
         {
+            var savedState = VirtualProfilerSaveState.LoadFromFile(saveStateFile);
+            Global.Launcher.SaveState = savedState;
             if (Objects.ReplayController == null) throw new ApplicationException("No replay adapter found.");
-            _activeReplayer = new RealTimeReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(replayFile));
+            _activeReplayer = new RealTimeReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(savedState.RunSettings.SubjectPositionPath));
             Objects.ReplayController.StartReplay(_activeReplayer);
         }
 
-        public void InstantReplay(string replayFile)
+        public void InstantReplay(string saveStateFile)
         {
+            var savedState = VirtualProfilerSaveState.LoadFromFile(saveStateFile);
+            Global.Launcher.SaveState = savedState;
             if (Objects.ReplayController == null) throw new ApplicationException("No replay adapter found.");
-            _activeReplayer = new InstantReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(replayFile));
+            _activeReplayer = new InstantReplayer(Objects.ReplayController.LineRenderer, SubjectLogger.Load(savedState.RunSettings.SubjectPositionPath));
             Objects.ReplayController.StartReplay(_activeReplayer);
         }
 
@@ -61,6 +65,10 @@ namespace Assets.VirtualProfiler
             _activeReplayer.PlayPause();
         }
 
+        public void SetPosition(int segmentPosition)
+        {
+            _activeReplayer.SetPosition(segmentPosition);
+        }
     }
 
     public class VirtualObjects
@@ -78,16 +86,27 @@ namespace Assets.VirtualProfiler
         private ReplayController _replayController;
         public ReplayController ReplayController
         {
-            get { return _replayController ?? (_replayController = BuildReplayController()); } //return Object.FindObjectOfType(typeof(ReplayController)) as ReplayController; }
+            get
+            {
+                return _replayController ??
+                       (_replayController =
+                        BuildReplayController());
+            }
         }
 
         private ReplayController BuildReplayController()
         {
-            var replayObject = new GameObject("vp_replayObject", typeof(LineRenderer));
+            var replayObject = GameObject.FindGameObjectWithTag(Global.Config.LineRendererTag);
+            if (replayObject == null)
+            {
+                // Create a default if tag not found.
+                replayObject = new GameObject("vp_replayObject", typeof (LineRenderer));
+                var renderer = replayObject.GetComponent<LineRenderer>();
+                renderer.SetWidth(1, 1);
+                renderer.SetColors(new Color(0, 0, 1), new Color(0, 0, 1));
+            }
             replayObject.AddComponent("ReplayController");
-            var renderer = replayObject.GetComponent<LineRenderer>();
-            renderer.SetWidth(1, 1);
-            renderer.SetColors(new Color(0, 0, 1), new Color(0, 0, 1));
+
             return replayObject.GetComponent<ReplayController>();
         }
 
@@ -96,16 +115,21 @@ namespace Assets.VirtualProfiler
             get { return GameObject.FindWithTag(Global.Config.LineRendererTag).renderer as ParticleRenderer; }
         }
 
+        public LaserController[] LaserControllers
+        {
+            get { return (from gameObject in Object.FindObjectsOfType(typeof (LaserController)) where (gameObject as LaserController) != null select (LaserController) gameObject).ToArray(); }
+        }
+
     }
 
     public class VirtualProfiler
     {
         private readonly SubjectController _controller;
         private SerialPortAdapter _movementStreamAdapter;
-        private readonly VirtualObjects _objects = new VirtualObjects();
+        private VirtualProfilerSaveState _saveState;
 
         public SerialPortAdapter SerialPortAdapter { get { return _movementStreamAdapter; } }
-
+        public VirtualProfilerSaveState SaveState { get { return _saveState; } set { _saveState = value; } }
         
         public VirtualProfiler()
         {
@@ -116,10 +140,10 @@ namespace Assets.VirtualProfiler
 
         public void Initialize()
         {
-            if (_objects.ReplayCamera != null)
-                _objects.ReplayCamera.enabled = false;
-            if (_objects.RuntimeCamera != null)
-                _objects.RuntimeCamera.enabled = true;
+            if (Global.Objects.ReplayCamera != null)
+                Global.Objects.ReplayCamera.enabled = false;
+            if (Global.Objects.RuntimeCamera != null)
+                Global.Objects.RuntimeCamera.enabled = true;
             else
                 (Object.FindObjectOfType(typeof (Camera)) as Camera).enabled = true;
         }
@@ -158,19 +182,31 @@ namespace Assets.VirtualProfiler
             Stop();
             EnableStreamAdapter();
 
-            var config = new VirtualProfilerRunConfiguration(runFolder, notes);
-            SaveProfilerConfiguration(config, config.SaveStatePath);
+            _saveState = new VirtualProfilerSaveState()
+                {
+                    RunSettings = new VirtualProfilerRunConfiguration(runFolder, notes),
+                    GlobalSettings = Global.Config,
+                    RuntimeResults = null
+                };
+            SaveProfilerConfiguration(_saveState, _saveState.RunSettings.SaveStatePath);
             
             if (Global.Config.EnableSubjectLogging)
-                _controller.SubjectLogger = new SubjectLogger(config.SubjectPositionPath);
+                _controller.SubjectLogger = new SubjectLogger(_saveState.RunSettings.SubjectPositionPath);
 
-            StartProfiling(new EventStreamWriter(config.MovementLogPath));
+            StartProfiling(new EventStreamWriter(_saveState.RunSettings.MovementLogPath));
         }
 
         public void StopAndFinalizeRun()
         {
             if (_controller.SubjectLogger != null)
                 _controller.SubjectLogger.Save();
+
+            var totalTime = Global.Objects.LaserControllers.Aggregate(0f, (x, y) => y.TotalTimeOn);
+            _saveState.RuntimeResults = new RuntimeResults
+                {
+                    TotalLaserTime = totalTime,
+                };
+            SaveProfilerConfiguration(_saveState, _saveState.RunSettings.SaveStatePath);
 
             Stop();
         }
@@ -189,14 +225,8 @@ namespace Assets.VirtualProfiler
             return _movementStreamAdapter.SerialStream.Count() != 0;
         }
 
-        private void SaveProfilerConfiguration(VirtualProfilerRunConfiguration config, string path)
+        private void SaveProfilerConfiguration(VirtualProfilerSaveState saveState, string path)
         {
-            var saveState = new VirtualProfilerSaveState
-            {
-                GlobalSettings = Global.Config,
-                RunSettings = config
-            };
-
             var saveStateFileContents = "";
             var serializer = new XmlSerializer(typeof(VirtualProfilerSaveState));
             using (var ms = new MemoryStream())
@@ -242,7 +272,10 @@ namespace Assets.VirtualProfiler
 
         public void SaveGlobalConfiguration()
         {
-            SaveProfilerConfiguration(null, "VirtualProfilerGlobal.cfg");
+            SaveProfilerConfiguration(new VirtualProfilerSaveState
+            {
+                GlobalSettings = Global.Config,
+            }, "VirtualProfilerGlobal.cfg");
         }
 
         public void OnApplicationQuit()
