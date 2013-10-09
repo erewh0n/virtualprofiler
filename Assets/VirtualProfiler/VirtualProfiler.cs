@@ -146,6 +146,8 @@ namespace Assets.VirtualProfiler
                 Global.Objects.RuntimeCamera.enabled = true;
             else
                 (Object.FindObjectOfType(typeof (Camera)) as Camera).enabled = true;
+			
+			Application.runInBackground = true;
         }
 
         public void EnableStreamAdapter()

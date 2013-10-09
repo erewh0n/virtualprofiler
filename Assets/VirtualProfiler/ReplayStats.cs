@@ -25,15 +25,18 @@ namespace Assets.VirtualProfiler
             {
                 var distance = _vectors[i].Vector.magnitude;
                 var time = (_vectors[i].Time - _vectors[i - 1].Time).TotalMilliseconds;
-                Velocities.Add(distance / time);
+                if (time == 0)
+					Velocities.Add(0);
+				else
+					Velocities.Add(distance / time);
             }
 
-            var sortedVelocities = Velocities.OrderBy(x => x);
+            var sortedVelocities = Velocities.OrderBy(x => x).ToList ();
             MaxVelocity = sortedVelocities.Last();
             MinVelocity = sortedVelocities.First();
 
             TotalDistance = _vectors.Aggregate(0f, (x, y) => y.Vector.magnitude);
-            AverageVelocity = Velocities.Aggregate(0f, (x, y) => (float) y) / Velocities.Count;
+            AverageVelocity = Velocities.Aggregate(0f, (x, y) => (float)(x + y)) / Velocities.Count;
         }
 
         public int          TotalSegments { get; protected set; }

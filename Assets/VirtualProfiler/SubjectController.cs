@@ -99,14 +99,16 @@ namespace Assets.VirtualProfiler
             {
                 if (Input.GetKeyDown(KeyCode.X))
                 {
-                    _driver.SendData("z1");
-                    _laserIsOn = true;
-                    _laserOnTime = DateTime.UtcNow;
-                }
-                if (_laserIsOn && (DateTime.UtcNow - _laserOnTime > TimeSpan.FromMilliseconds(LaserDuration)))
-                {
-                    _driver.SendData("z0");
-                    _laserIsOn = false;
+					if (_laserIsOn)
+					{
+						_driver.SendData("z0");
+	                    _laserIsOn = false;
+					}
+					else
+					{
+						_driver.SendData("z1");
+	                    _laserIsOn = true;
+					}
                 }
                 if (_driver == null || _moving)
                 {

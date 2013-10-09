@@ -26,7 +26,7 @@ namespace Assets.VirtualProfiler
         private bool _isPaused;
         private Stopwatch _elapsed;
 
-        public int SegmentIndex { get { return _index; } }
+        public int SegmentIndex { get { return _index >= _vectors.Count ? _vectors.Count - 1 : _index; } }
         public List<TimeVector> Vectors { get { return _vectors; } }
 
         public void PlayPause()
