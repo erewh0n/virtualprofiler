@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Assets.Histogram;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -195,6 +196,24 @@ namespace Assets.VirtualProfiler
             if (Global.Config.EnableSubjectLogging)
                 _controller.SubjectLogger = new SubjectLogger(_saveState.RunSettings.SubjectPositionPath);
 
+            _controller.HistogramTrackers.Clear();
+            _controller.HistogramTrackers.Add(new HistogramTracker(
+                _controller.transform,
+                _saveState.RunSettings.RunFolder,
+                _saveState.GlobalSettings));
+
+            _controller.HistogramTrackers.Add(new HistogramDistanceTracker(
+                _saveState.RunSettings.RunFolder,
+                _saveState.GlobalSettings,
+                _controller.transform,
+                _controller.ChaserTransform));
+
+            _controller.HistogramTrackers.Add(new HistogramOrientationTracker(
+                _saveState.RunSettings.RunFolder,
+                _saveState.GlobalSettings,
+                _controller.transform,
+                _controller.ChaserTransform));
+
             StartProfiling(new EventStreamWriter(_saveState.RunSettings.MovementLogPath));
         }
 
@@ -243,7 +262,7 @@ namespace Assets.VirtualProfiler
         {
             try
             {
-                _controller.AttachDriver(new UnityMovementDriver(_movementStreamAdapter, new MovementProtocolAdapter()));
+                _controller.AttachDriver(new UnityMovementDriver(_movementStreamAdapter, new MovementProtocolAdapter(Global.Config.MinMotionFilter)));
             }
             catch (Exception e)
             {

@@ -2,30 +2,42 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace Assets.VirtualProfiler
 {
+    /// <summary>
+    /// TODO KPH: this is kind of a hack.  We should encapsulate the format of a replay "record"
+    /// TODO KHP: and rename/conceptualize this logger as a "RuntimeRecorder".
+    /// </summary>
     public class SubjectLogger
     {
-        private readonly string _path;
-        private readonly StringWriter _buffer = new StringWriter();
+        private int _bufferSize;
+        private readonly FileStream _fs;
 
         public SubjectLogger(string path)
         {
-            _path = path;
-            File.WriteAllText(_path, "");
-            File.Delete(_path);
+            _fs = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
         }
 
         public void AddVector(Vector3 positionVector, Quaternion rotation)
         {
-            _buffer.WriteLine("{0},{1},{2},{3},{4}", DateTime.UtcNow.ToString("o"), positionVector.x, positionVector.y, positionVector.z, rotation.eulerAngles.y);
+            var bytesToWrite  = Encoding.UTF8.GetBytes(
+                                string.Format("{0},{1},{2},{3},{4}{5}",
+                                                DateTime.UtcNow.ToString("o"),
+                                                positionVector.x,
+                                                positionVector.y,
+                                                positionVector.z,
+                                                rotation.eulerAngles.y,
+                                                Environment.NewLine));
+            _fs.Write(bytesToWrite, 0, bytesToWrite.Count());
         }
 
         public void Save()
         {
-            File.WriteAllText(_path, _buffer.ToString());
+            _fs.Flush();
+            _fs.Close();
         }
 
         public static IEnumerable<TimeVector> Load(string path)

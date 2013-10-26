@@ -8,7 +8,13 @@ namespace Assets.VirtualProfiler
 {
     public class MovementProtocolAdapter
     {
+        private readonly int _movementThreshold;
         private StringBuilder _buffer = new StringBuilder();
+
+        public MovementProtocolAdapter(int movementThreshold)
+        {
+            _movementThreshold = movementThreshold;
+        }
 
         public IEnumerable<Vector3> GetVectors(IEnumerable<byte> bytes)
         {
@@ -37,14 +43,15 @@ namespace Assets.VirtualProfiler
             }
         }
 
-        private static Vector3? ToVector(string buffer)
+        private Vector3? ToVector(string buffer)
         {
-            // Debug.Log("buffer: " + buffer);
             try
             {
                 var axes =
                     (from axis in buffer.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
-                     select int.Parse(axis)).ToArray();
+                     let res = int.Parse(axis)
+                     select res < _movementThreshold ? 0 : res
+                     ).ToArray();
 
                 if (axes.Length != 6) return null;
 

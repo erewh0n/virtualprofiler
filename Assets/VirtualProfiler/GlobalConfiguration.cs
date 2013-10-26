@@ -24,5 +24,15 @@ namespace Assets.VirtualProfiler
         public string SurfaceLayerTag  = "SurfaceLayer";
         public string LineRendererTag  = "LineRenderer";
         public string ParticleRendererTag = "ParticleRenderer";
+
+        public int   MinMotionFilter     = 2;
+        public float HistogramSampleRate = 1f;
+        public float HistogramMinY       = 0f;
+        public float HistogramMaxY       = 5f;
+        public int   HistogramGranularity = 128;
+        public int   HistogramHeight     = 128;
+        public int   HistogramWidth      = 256;
+
+        public bool RenderHistogram = true;
     }
 }
