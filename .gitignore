@@ -1,5 +1,5 @@
 obj
 Temp
 .DS_Store
-*ScriptAssemblies*VirtualProfilerGlobal.cfg
-
+*ScriptAssemblies*
+VirtualProfilerGlobal.cfg
