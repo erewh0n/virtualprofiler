@@ -98,13 +98,14 @@ namespace Assets.VirtualProfiler
         private ReplayController BuildReplayController()
         {
             var replayObject = GameObject.FindGameObjectWithTag(Global.Config.LineRendererTag);
+
             if (replayObject == null)
             {
                 // Create a default if tag not found.
                 replayObject = new GameObject("vp_replayObject", typeof (LineRenderer));
                 var renderer = replayObject.GetComponent<LineRenderer>();
                 renderer.SetWidth(1, 1);
-                renderer.SetColors(new Color(0, 0, 1), new Color(0, 0, 1));
+                renderer.SetColors(new Color(1, 0, 0), new Color(0, 1, 0));
             }
             replayObject.AddComponent("ReplayController");
 

@@ -144,16 +144,106 @@ namespace Assets.SmartMenu
                                 },
                             Validator = x => Global.Config.LineRendererTag = x,
                         },
-                };
+ 					 new MenuTextFieldBinder<string>(Global.Config.HistogramMinY.ToString())
+                        {
+                            Name = "Histogram Min Y",
+                            Description = "Min Y Value of Histogram.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 330, 120, 20), "Min Y Histogram: ");
+                                    return GUI.TextField(new Rect(130, 330, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramMinY = float.Parse(x),
+                        },
+									
+					 new MenuTextFieldBinder<string>(Global.Config.HistogramMaxY.ToString())
+                        {
+                            Name = "Histogram Max Y",
+                            Description = "Max Y Value Histogram.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 355, 120, 20), "Max Y Histogram: ");
+                                    return GUI.TextField(new Rect(130, 355, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramMaxY = float.Parse(x),
+                        },
+									
+					 new MenuTextFieldBinder<string>(Global.Config.HistogramGranularity.ToString())
+                        {
+                            Name = "Historam Granuality",
+                            Description = "Historam Granuality.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 380, 120, 20), "Historam Granuality: ");
+                                    return GUI.TextField(new Rect(130, 380, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramGranularity = int.Parse(x),
+                        },
+									
+					 new MenuTextFieldBinder<string>(Global.Config.HistogramSampleRate.ToString())
+                        {
+                            Name = "Histogram Sample Rate",
+                            Description = "Histogram Sample Rate.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 405, 120, 20), "Histogram Sample Rate: ");
+                                    return GUI.TextField(new Rect(130, 405, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramSampleRate = float.Parse(x),
+                        },
+				 	new MenuTextFieldBinder<string>(Global.Config.RenderHistogram.ToString())
+                        {
+                            Name = "Render Histogram",
+                            Description = "Render Histogram",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 430, 120, 20), "Render Histogram: ");
+                                    return GUI.TextField(new Rect(130, 430, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.RenderHistogram = bool.Parse(x)
+                        },
+				 	new MenuTextFieldBinder<string>(Global.Config.HistogramHeight.ToString())
+                        {
+                            Name = "Histogram Height",
+                            Description = "Histogram Height",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 455, 120, 20), "Histogram Height: ");
+                                    return GUI.TextField(new Rect(130, 455, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramHeight = int.Parse(x)
+                        },
+				 	new MenuTextFieldBinder<string>(Global.Config.HistogramWidth.ToString())
+                        {
+                            Name = "Histogram Width",
+                            Description = "Histogram Width",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 480, 120, 20), "Histogram Width: ");
+                                    return GUI.TextField(new Rect(130, 480, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.HistogramWidth = int.Parse(x)
+                        },				
+					 new MenuTextFieldBinder<string>(Global.Config.MinMotionFilter.ToString())
+                        {
+                            Name = "Min Motion Filter",
+                            Description = "Min Motion Filter.",
+                            FieldUpdater = x =>
+                                {
+                                    GUI.Label(new Rect(5, 505, 120, 40), "Min Motion Filter (higher number reduces jitter): ");
+                                    return GUI.TextField(new Rect(130, 505, 100, 20), x.ToString(), 200);
+                                },
+                            Validator = x => Global.Config.MinMotionFilter = int.Parse(x),
+                        },				
+               };
         }
 
         public ISmartMenu CreateMenu()
         {
-            GUI.BeginGroup(new Rect(5, 5, 235, 355));
+            GUI.BeginGroup(new Rect(5, 5, 235, 700), GUI.skin.box);
 
-            GUI.Box(new Rect(0, 0, 235, 355), "");
 
-            if (GUI.Button(new Rect(5, 330, 50, 20), "OK"))
+            if (GUI.Button(new Rect(5, 550, 50, 20), "OK"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
@@ -164,7 +254,7 @@ namespace Assets.SmartMenu
                 }
                 return new MainMenuView();
             }
-            if (GUI.Button(new Rect(130, 330, 100, 20), "Save as default"))
+            if (GUI.Button(new Rect(130, 550, 100, 20), "Save as default"))
             {
                 foreach (var boundField in _boundTextFields)
                 {
