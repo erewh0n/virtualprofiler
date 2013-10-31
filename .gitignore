@@ -1,12 +1,12 @@
 obj
-Temp
+Temp/
 .DS_Store
 *ScriptAssemblies*
 VirtualProfilerGlobal.cfg
 Assembly*
 *.sln
-Temp
-ProjectSettings
-obj
-Library
+Temp/
+ProjectSettings/
+obj/
+Library/
 virtualprofiler*
